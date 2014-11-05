@@ -54,46 +54,11 @@ class LEDState(object):
         return current
         
     def do_step(self):
-        # step red
+        # simplest step algo, will add an HSV mode later.
         self.r = self._step(self.r, self.r_t)
         self.g = self._step(self.g, self.g_t)
         self.b = self._step(self.b, self.b_t)
-        #if self.r <= self.r_t:
-            #if self.r + self.sz <= self.r_t:
-                #self.r += self.sz
-            #elif self.r + self.sz > self.r_t:
-                #self.r = self.r_t
-        #else:
-            #if self.r - self.sz <= self.r_t:
-                #self.r -= self.sz
-            #elif self.r - self.sz < self.r_t:
-                #self.r = self.r_t
-        
-        ## step green
-        #if self.g <= self.g_t:
-            #if self.g + self.sz <= self.g_t:
-                #self.g += self.sz
-            #elif self.g + self.sz > self.g_t:
-                #self.g = self.g_t
-                
-        #else:
-            #if self.g - self.sz >= self.g_t:
-                #self.g -= self.sz
-            #elif self.g - self.sz < self.g_t:
-                #self.g = self.g_t
-        
-        ## step blue
-        #if self.b <= self.b_t:
-            #if self.b + self.sz <= self.b_t:
-                #self.b += self.sz
-            #elif self.b + self.sz > self.b_t:
-                #self.b = self.b_t
-                
-        #else:
-            #if self.b - self.sz >= self.b_t:
-                #self.b -= self.sz
-            #elif self.b - self.sz < self.b_t:
-                #self.b = self.b_t
+
             
     def read(self):
         return [self.r, self.g, self.b]
@@ -174,34 +139,8 @@ class LEDStringTwinkle(object):
                 time.sleep(self.fade_time)
             
 
-## make the input buffer
-##               A       d       a       Fixme::-------------|
-#buffer_start = ['\x41', '\x64', '\x61']
-#buffer_3 = (LED_COUNT -1) >> 8
-#buffer_4 = (LED_COUNT -1) & 0xff
-#buffer_5 = buffer_3 ^ buffer_4 ^ 0x55
-#buffer_complete = buffer_start + [buffer_3, buffer_4, buffer_5]
 
-#hues = [0,1]
-
-## fill dat buffer with shades of blue
-#for i in range(30):
-    #r = random.choice(hues)
-    #if r == 1:
-        #buffer_complete.append(random.randint(128,255))
-        #buffer_complete.append(random.randint(0,64))
-        #buffer_complete.append(0)
-    #if r == 0:
-        #buffer_complete.append(random.randint(128,255))
-        #buffer_complete.append(0)
-        #buffer_complete.append(random.randint(0,64))
-
-# Crack it open
 s = serial.Serial(LED_PORT,115200)
-
-
-    
-#s.write(buffer_complete)
 
 
 t = LEDStringTwinkle(LED_COUNT, LED_DURATION, LED_FADE_TIME, LED_FADE_STEPS, s, [0])
