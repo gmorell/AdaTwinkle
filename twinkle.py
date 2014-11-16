@@ -9,7 +9,7 @@ LED_PORT = "/dev/ttyACM0"
 LED_DURATION = 600
 LED_FADE_TIME = 0.05
 LED_FADE_STEPS = 30
-
+        
 class LEDState(object):
     def __init__(self, r=0, g=0, b=0, step_size=3, id=0):
         self.r = r
