@@ -14,13 +14,14 @@ LED_FADE_STEPS = 30
 
 class ColorChaser(AdaProtocolHandler):
     def __init__(self, *args, **kwargs):
-        print args
-        print kwargs
-        super(ColorChaser, self).__init__(*args, **kwargs)
-        # do something else
         self.spacing = 30
         self.fade_by = 20
-        # # kwargs['state_kwargs'] = {"spacing": self.spacing, "fade_by": self.fade_by}
+        self.hue = 128
+        kwargs['state_kwargs'] = {"spacing": self.spacing, "fade_by": self.fade_by, "hue":self.hue}
+        super(ColorChaser, self).__init__(*args, **kwargs)
+        # do something else
+
+
 
 
         self.init_leds()
