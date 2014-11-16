@@ -157,11 +157,30 @@ class ChaserLEDState(BaseLEDState, HSVHelper): # kinda like a cylon
 
     def set_status(self, value): # useful for init
         self.status = value
-        # todo set the color here too
+        self.color_from_status()
 
     def do_step(self):
         self.status = (self.status + 1) % self.spacing
         self.color_from_status()
+
+    def read_rgb(self):
+        r, g, b = self._hsv_to_rgb(self.h, self.s, self.v)
+        return [int(r), int(g), int(b)]
+
+class RainbowLEDState(BaseLEDState, HSVHelper):
+    def __init__(self, id, status=0, saturation=255, value = 255):
+        self.id = id
+        self.status = status
+        self.h = 0
+        self.s = saturation
+        self.v = value
+
+    def set_status(self, value): # useful for init
+        self.status = value
+
+    def do_step(self):
+        self.status = (self.status + 1) % 256
+        self.h = self.status
 
     def read_rgb(self):
         r, g, b = self._hsv_to_rgb(self.h, self.s, self.v)
