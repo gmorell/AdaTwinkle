@@ -136,3 +136,33 @@ class HSVAwareLEDStepState(BaseLEDState, HSVHelper):
     def read_t_rgb(self):
         r, g, b = self._hsv_to_rgb(self.h_t, self.s_t, self.v_t)
         return [r, g, b]
+
+class ChaserLEDState(BaseLEDState, HSVHelper): # kinda like a cylon
+    def __init__(self, id, hue=0, spacing=30, fade_by=20, status=0):
+        self.id = id
+        self.h = hue
+        self.s = 255
+        self.v = 0
+        self.spacing = spacing
+        self.fade_by = fade_by
+        self.window = 255 / (self.spacing - self.fade_by)
+
+        self.status = status # this gets set later
+
+    def color_from_status(self):
+        if self.fade_by < self.status < self.spacing:
+            self.v = self.window * (self.status % self.fade_by)
+        else:
+            self.v = 0
+
+    def set_status(self, value): # useful for init
+        self.status = value
+        # todo set the color here too
+
+    def do_step(self):
+        self.status = (self.status + 1) % self.spacing
+        self.color_from_status()
+
+    def read_rgb(self):
+        r, g, b = self._hsv_to_rgb(self.h, self.s, self.v)
+        return [int(r), int(g), int(b)]

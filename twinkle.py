@@ -92,6 +92,7 @@ class LEDStringTwinkle(object):
 s = DummySerialDevice()
 
 t = LEDStringTwinkle(LED_COUNT, LED_DURATION, LED_FADE_TIME, LED_FADE_STEPS, s, [0], state=HSVAwareLEDStepState)
+# t = LEDStringTwinkle(LED_COUNT, LED_DURATION, LED_FADE_TIME, LED_FADE_STEPS, s, [0], state=DumbRGBLEDStepState)
 t.run()
 
 s.close()
