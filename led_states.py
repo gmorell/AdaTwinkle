@@ -109,7 +109,10 @@ class HSVAwareLEDStepState(BaseLEDState, HSVHelper):
             return False
 
     def set_step_target(self, r, g, b):
-        self.h_t, self.s_t, self.v_t = self._rgb_to_hsv(r, g, b)
+        h,s,v = self._rgb_to_hsv(r, g, b)
+        self.h_t = h
+        self.s_t = 255
+        self.v_t = 255
 
     def set_step_target_to_zeroes(self):
         self.s_t = 0
