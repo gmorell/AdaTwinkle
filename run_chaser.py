@@ -12,26 +12,19 @@ LED_FADE_TIME = 0.05
 LED_FADE_STEPS = 30
 
 
-class ColorChaser(AdaProtocolHandler):
+class SimpleColorChaser(AdaProtocolHandler):
     def __init__(self, *args, **kwargs):
-        self.spacing = 30
-        self.fade_by = 20
-        self.hue = 128
+        self.spacing = kwargs.pop('spacing', 30)
+        self.fade_by = kwargs.pop('fade_by', 15)
+        self.hue = kwargs.pop('hue', 0)
         kwargs['state_kwargs'] = {"spacing": self.spacing, "fade_by": self.fade_by, "hue":self.hue}
-        super(ColorChaser, self).__init__(*args, **kwargs)
-        # do something else
-
-
-
+        super(SimpleColorChaser, self).__init__(*args, **kwargs)
 
         self.init_leds()
 
     def init_leds(self):
         c = 0
         for led in self.leds:
-            led.hue = 60
-            led.spacing = self.spacing
-            led.fade_by = self.fade_by
             led.status = led.id % led.spacing
 
     def run(self):
@@ -44,9 +37,10 @@ class ColorChaser(AdaProtocolHandler):
             time.sleep(self.fade_time)
 
 # for debugging
-# s = serial.Serial(LED_PORT, 115200)
-s = DummySerialDevice()
-t = ColorChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME, fade_steps=LED_FADE_STEPS, state_storage=ChaserLEDState)
+# s = DummySerialDevice()
+s = serial.Serial(LED_PORT, 115200)
+t = SimpleColorChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME, fade_steps=LED_FADE_STEPS, state_storage=ChaserLEDState,
+                      hue=128, fade_by=15, spacing=30)
 t.run()
 
 s.close()
