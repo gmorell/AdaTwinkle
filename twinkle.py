@@ -5,6 +5,7 @@ import time
 
 # vars
 from led_states import DumbRGBLEDStepState,HSVAwareLEDStepState
+from helpers import DummySerialDevice
 
 LED_COUNT = 240
 LED_PORT = "/dev/ttyACM0"
@@ -87,7 +88,8 @@ class LEDStringTwinkle(object):
                 time.sleep(self.fade_time)
 
 
-s = serial.Serial(LED_PORT, 115200)
+# s = serial.Serial(LED_PORT, 115200)
+s = DummySerialDevice()
 
 t = LEDStringTwinkle(LED_COUNT, LED_DURATION, LED_FADE_TIME, LED_FADE_STEPS, s, [0], state=HSVAwareLEDStepState)
 t.run()

@@ -88,7 +88,7 @@ class DumbRGBLEDStepState(BaseLEDState):
 
 
 class HSVAwareLEDStepState(BaseLEDState, HSVHelper):
-    def __init__(self, h, s, v, step_size=3, id=0):
+    def __init__(self, h=0, s=0, v=0, step_size=3, id=0):
         self.h = h
         self.s = s
         self.v = v
@@ -102,6 +102,19 @@ class HSVAwareLEDStepState(BaseLEDState, HSVHelper):
     def at_zeroes(self):
         return self.s == self.v == 0
 
+    def at_target(self):  # to write the next values
+        if self.h == self.h_t and self.s == self.s_t and self.v == self.v_t:
+            return True
+        else:
+            return False
+
+    def set_step_target(self, r, g, b):
+        self.h_t, self.s_t, self.v_t = self._rgb_to_hsv(r, g, b)
+
+    def set_step_target_to_zeroes(self):
+        self.s_t = 0
+        self.v_t = 0
+
     def do_step(self):
         self.h = self._step(self.h, self.h_t)
         self.s = self._step(self.s, self.s_t)
@@ -112,7 +125,7 @@ class HSVAwareLEDStepState(BaseLEDState, HSVHelper):
 
     def read_rgb(self):
         r, g, b = self._hsv_to_rgb(self.h, self.s, self.v)
-        return [r, g, b]
+        return [int(r), int(g), int(b)]
 
     def read_t(self):
         return [self.h_t, self.s_t, self.v_t]
