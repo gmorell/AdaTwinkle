@@ -109,7 +109,7 @@ class HSVAwareLEDStepState(BaseLEDState, HSVHelper):
             return False
 
     def set_step_target(self, r, g, b):
-        h,s,v = self._rgb_to_hsv(r, g, b)
+        h, s, v = self._rgb_to_hsv(r, g, b)
         self.h_t = h
         self.s_t = 255
         self.v_t = 255
@@ -137,7 +137,8 @@ class HSVAwareLEDStepState(BaseLEDState, HSVHelper):
         r, g, b = self._hsv_to_rgb(self.h_t, self.s_t, self.v_t)
         return [r, g, b]
 
-class ChaserLEDState(BaseLEDState, HSVHelper): # kinda like a cylon
+
+class ChaserLEDState(BaseLEDState, HSVHelper):  # kinda like a cylon
     def __init__(self, id, hue=0, spacing=30, fade_by=20, status=0):
         self.id = id
         self.h = hue
@@ -147,7 +148,7 @@ class ChaserLEDState(BaseLEDState, HSVHelper): # kinda like a cylon
         self.fade_by = fade_by
         self.window = 255 / (self.spacing - self.fade_by)
 
-        self.status = status # this gets set later
+        self.status = status  # this gets set later
 
     def color_from_status(self):
         if self.fade_by < self.status < self.spacing:
@@ -155,7 +156,7 @@ class ChaserLEDState(BaseLEDState, HSVHelper): # kinda like a cylon
         else:
             self.v = 0
 
-    def set_status(self, value): # useful for init
+    def set_status(self, value):  # useful for init
         self.status = value
         self.color_from_status()
 
@@ -167,21 +168,72 @@ class ChaserLEDState(BaseLEDState, HSVHelper): # kinda like a cylon
         r, g, b = self._hsv_to_rgb(self.h, self.s, self.v)
         return [int(r), int(g), int(b)]
 
+
 class RainbowLEDState(BaseLEDState, HSVHelper):
-    def __init__(self, id, status=0, saturation=255, value = 255):
+    def __init__(self, id, status=0, saturation=255, value=255, stepsize=1):
         self.id = id
         self.status = status
         self.h = 0
         self.s = saturation
         self.v = value
+        self.stepsize = stepsize
 
-    def set_status(self, value): # useful for init
+    def set_status(self, value):  # useful for init
         self.status = value
 
     def do_step(self):
-        self.status = (self.status + 1) % 256
+        self.status = (self.status + self.stepsize) % 256
         self.h = self.status
 
     def read_rgb(self):
         r, g, b = self._hsv_to_rgb(self.h, self.s, self.v)
         return [int(r), int(g), int(b)]
+
+
+class DualHueLEDState(BaseLEDState, HSVHelper):
+    def __init__(self, id, status=0, saturation=255, value=255, stepsize=1, hue1=0, hue2=0):
+        self.id = id
+        self.status = status
+        self.sz = stepsize
+
+        self.h_1 = hue1
+        self.h_2 = hue2
+        self.s = saturation
+        self.v = value
+
+        self.target = hue1
+        self.hue_range = self._min_max_range_gen()
+        self.hue_count = len(self.hue_range) - 1
+
+        self.target = len(self.hue_range) -1
+
+    def set_status(self, value):
+        self.status = value
+
+    def _min_max_range_gen(self):
+        if self.h_1 <= self.h_2:
+            return [i for i in xrange(self.h_1, self.h_2+1)]
+        else:
+            range_top = [i for i in xrange(self.h_1, 256)]
+            range_bot = [i for i in xrange(0, self.h_2+1)]
+            return range_top + range_bot
+
+    def do_step(self):
+        if self.at_target():
+            if self.target == 0:
+                self.target = self.hue_count
+            else:
+                self.target = 0
+
+        self.status = self._step(self.status, self.target)
+
+    def at_target(self):
+        return self.status == self.target
+
+    def read_rgb(self):
+        r, g, b = self._hsv_to_rgb(self.hue_range[self.status], self.s, self.v)
+        return [int(r), int(g), int(b)]
+
+        # from led_states import DualHueLEDState
+        # x = DualHueLEDState(id=0, hue1=30, hue2=40)
+        # x.do_step(), x.at_target(), x.status, x.target

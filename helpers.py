@@ -1,5 +1,11 @@
 import colorsys
 
+def pattern_list_fill(pattern, count):
+    index = 0
+    while index <= count:
+        for i in pattern:
+            yield i
+            index +=1
 
 class HSVHelper(object):
     def _sys_255_to_1(self, values):
