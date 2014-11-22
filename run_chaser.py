@@ -35,6 +35,18 @@ class SimpleColorChaser(AdaProtocolHandler):
             self.device.write(new_buffer)
             time.sleep(self.fade_time)
 
+
+class SimpleShiftingColorChaser(SimpleColorChaser):
+    def run(self):
+        while time.time() < self.t_end:
+            new_buffer = deepcopy(self.buffer_header())
+            for led in self.leds:
+                led.do_step()
+                led.hue = ( led.hue + 1 ) % 255
+                new_buffer.extend(led.read_rgb())
+            self.device.write(new_buffer)
+            time.sleep(self.fade_time)
+
 class RainbowChaser(AdaProtocolHandler):
     def __init__(self, *args, **kwargs):
         self.saturation = kwargs.pop('saturation', 255)
@@ -110,8 +122,11 @@ s = DummySerialDevice()
 # t = SimpleColorChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME, fade_steps=LED_FADE_STEPS, state_storage=ChaserLEDState,
 #                       hue=128, fade_by=15, spacing=30)
 
+t = SimpleShiftingColorChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME, fade_steps=LED_FADE_STEPS, state_storage=ChaserLEDState,
+                      hue=0, fade_by=15, spacing=30)
+
 # t = RainbowChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME, fade_steps=LED_FADE_STEPS, state_storage=RainbowLEDState)
-t = BouncyChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME, fade_steps=LED_FADE_STEPS, state_storage=DualHueLEDState)
-t.run()
+# t = BouncyChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME, fade_steps=LED_FADE_STEPS, state_storage=DualHueLEDState)
+# t.run()
 
 s.close()
