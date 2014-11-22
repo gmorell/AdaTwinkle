@@ -42,7 +42,7 @@ class SimpleShiftingColorChaser(SimpleColorChaser):
             new_buffer = deepcopy(self.buffer_header())
             for led in self.leds:
                 led.do_step()
-                led.hue = ( led.hue + 1 ) % 255
+                led.h = ( led.hue + 1 ) % 255
                 new_buffer.extend(led.read_rgb())
             self.device.write(new_buffer)
             time.sleep(self.fade_time)
@@ -117,8 +117,8 @@ class BouncyChaser(AdaProtocolHandler):
             time.sleep(self.fade_time)
 
 # for debugging
-s = DummySerialDevice()
-# s = serial.Serial(LED_PORT, 115200)
+# s = DummySerialDevice()
+s = serial.Serial(LED_PORT, 115200)
 # t = SimpleColorChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME, fade_steps=LED_FADE_STEPS, state_storage=ChaserLEDState,
 #                       hue=128, fade_by=15, spacing=30)
 
@@ -127,6 +127,6 @@ t = SimpleShiftingColorChaser(device=s, led_count=LED_COUNT, run_duration=LED_DU
 
 # t = RainbowChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME, fade_steps=LED_FADE_STEPS, state_storage=RainbowLEDState)
 # t = BouncyChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME, fade_steps=LED_FADE_STEPS, state_storage=DualHueLEDState)
-# t.run()
+t.run()
 
 s.close()
