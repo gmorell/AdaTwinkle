@@ -36,7 +36,7 @@ class SimpleColorChaser(AdaProtocolHandler):
             time.sleep(self.fade_time)
 
 
-class MultiSimpleColorChaser(SimpleColorChaser):
+class MultiSimpleColorChaser(AdaProtocolHandler):
     def __init__(self, *args, **kwargs):
         self.hues = kwargs.pop('hues', [0, 128])
         self.spacing = kwargs.pop('spacing', 30)
@@ -157,7 +157,7 @@ if __name__ == "__main__":
     # t = BouncyChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME, fade_steps=LED_FADE_STEPS, state_storage=DualHueLEDState)
 
     t = MultiSimpleColorChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME, fade_steps=LED_FADE_STEPS, state_storage=MultiChaserLEDState,
-    hues=[0,128], fade_by=15, spacing=30)
+        hues=[0,128], fade_by=15, spacing=30)
     t.run()
     0
     s.close()
