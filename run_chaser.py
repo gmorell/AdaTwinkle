@@ -144,8 +144,8 @@ class BouncyChaser(AdaProtocolHandler):
 
 if __name__ == "__main__":
     # for debugging
-    # s = DummySerialDevice()
-    s = serial.Serial(LED_PORT, 115200)
+    s = DummySerialDevice()
+    # s = serial.Serial(LED_PORT, 115200)
     # t = SimpleColorChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME, fade_steps=LED_FADE_STEPS, state_storage=ChaserLEDState,
     # hue=128, fade_by=15, spacing=30)
 
@@ -159,5 +159,4 @@ if __name__ == "__main__":
     t = MultiSimpleColorChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME, fade_steps=LED_FADE_STEPS, state_storage=MultiChaserLEDState,
         hues=[0,128], fade_by=15, spacing=30)
     t.run()
-    0
     s.close()

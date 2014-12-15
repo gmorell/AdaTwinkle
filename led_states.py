@@ -170,7 +170,7 @@ class ChaserLEDState(BaseLEDState, HSVHelper):  # kinda like a cylon
         return [int(r), int(g), int(b)]
 
 class MultiChaserLEDState(BaseLEDState, HSVHelper):
-    def __init__(self, id, hues=[0], spacing=30, fade_by=20, status=0):
+    def __init__(self, id, hues=[0,64,128], spacing=30, fade_by=20, status=0):
         self.id = id
         self.hs = hues
         self.hc = len(hues)
@@ -184,12 +184,13 @@ class MultiChaserLEDState(BaseLEDState, HSVHelper):
         self.status = status
 
         self.statushues = list(chain.from_iterable([[x for i in xrange(self.spacing)] for x in self.hs]))
+        # print self.statushues
 
     def color_from_status(self):
         self.h = self.statushues[self.status]
 
         # brightness is diff here
-        if self.fade_by < self.status < self.spacing:
+        if self.fade_by < self.status % self.spacing < self.spacing:
             self.v = self.window * (self.status % self.fade_by)
 
         else:
@@ -197,6 +198,8 @@ class MultiChaserLEDState(BaseLEDState, HSVHelper):
 
     def do_step(self):
         self.status = (self.status + 1) % (self.spacing * self.hc)
+        # if self.id == 1: print "STATUS %s %s %s" % (self.status, self.h, self.v)
+
         self.color_from_status()
 
     def read_rgb(self):
