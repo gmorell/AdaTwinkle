@@ -3,7 +3,7 @@ import serial
 from ada_protocol import AdaProtocolHandler
 import time
 from helpers import DummySerialDevice, pattern_list_fill
-from led_states import ChaserLEDState, RainbowLEDState, DualHueLEDState, MultiChaserLEDState
+from led_states import ChaserLEDState, RainbowLEDState, DualHueLEDState, MultiChaserLEDState, MultiNoSpaceChaseState
 
 LED_COUNT = 240
 LED_PORT = "/dev/ttyACM0"
@@ -45,6 +45,30 @@ class MultiSimpleColorChaser(AdaProtocolHandler):
         super(MultiSimpleColorChaser, self).__init__(*args, **kwargs)
 
         self.init_leds()
+
+    def init_leds(self):
+        for led in self.leds:
+            led.status = led.id % (led.spacing * len(self.hues))
+
+    def run(self):
+        while time.time() < self.t_end:
+            new_buffer = deepcopy(self.buffer_header())
+            for led in self.leds:
+                led.do_step()
+                new_buffer.extend(led.read_rgb())
+            self.device.write(new_buffer)
+            time.sleep(self.fade_time)
+
+
+class MultiSimpleNoSpaceChaser(AdaProtocolHandler):
+    def __init__(self, *args, **kwargs):
+        self.hues = kwargs.pop('hues', [0, 128])
+        self.spacing = kwargs.pop('spacing', 30)
+        kwargs['state_kwargs'] = {"spacing": self.spacing, "hues": self.hues}
+        super(MultiSimpleNoSpaceChaser, self).__init__(*args, **kwargs)
+
+        self.init_leds()
+
 
     def init_leds(self):
         for led in self.leds:
@@ -144,19 +168,24 @@ class BouncyChaser(AdaProtocolHandler):
 
 if __name__ == "__main__":
     # for debugging
-    s = DummySerialDevice()
-    # s = serial.Serial(LED_PORT, 115200)
+    # s = DummySerialDevice()
+    s = serial.Serial(LED_PORT, 115200)
     # t = SimpleColorChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME, fade_steps=LED_FADE_STEPS, state_storage=ChaserLEDState,
     # hue=128, fade_by=15, spacing=30)
 
     # t = SimpleShiftingColorChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME,
-    #                               fade_steps=LED_FADE_STEPS, state_storage=ChaserLEDState,
-    #                               hue=0, fade_by=15, spacing=30)
+    # fade_steps=LED_FADE_STEPS, state_storage=ChaserLEDState,
+    # hue=0, fade_by=15, spacing=30)
 
     # t = RainbowChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME, fade_steps=LED_FADE_STEPS, state_storage=RainbowLEDState)
     # t = BouncyChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME, fade_steps=LED_FADE_STEPS, state_storage=DualHueLEDState)
 
-    t = MultiSimpleColorChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME, fade_steps=LED_FADE_STEPS, state_storage=MultiChaserLEDState,
-        hues=[0,128], fade_by=15, spacing=30)
+    t = MultiSimpleColorChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME,
+                               fade_steps=LED_FADE_STEPS, state_storage=MultiChaserLEDState,
+                               hues=[0, 128], fade_by=15, spacing=30)
+
+    t = MultiSimpleNoSpaceChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME,
+                               fade_steps=LED_FADE_STEPS, state_storage=MultiNoSpaceChaseState,
+                               hues=[0, 128], spacing=15)
     t.run()
     s.close()

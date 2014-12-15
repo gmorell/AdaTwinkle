@@ -33,8 +33,8 @@ class DummySerialDevice(object):
     """
 
     def write(self, buff):
-        pass
-        # print(buff)
+        # pass
+        print(buff)
 
     def close(self, *args, **kwargs):
         print("'Closed' dummy serial device")

@@ -206,6 +206,30 @@ class MultiChaserLEDState(BaseLEDState, HSVHelper):
         r, g, b = self._hsv_to_rgb(self.h, self.s, self.v)
         return [int(r), int(g), int(b)]
 
+class MultiNoSpaceChaseState(BaseLEDState, HSVHelper):
+    def __init__(self, id, hues, spacing, status=0):
+        self.id = id
+        self.hs = hues
+        self.hc = len(hues)
+        self.h = 0  # gets set later
+        self.s = 255
+        self.v = 255
+
+        self.spacing = spacing
+        self.status = status
+
+        self.statushues = list(chain.from_iterable([[x for i in xrange(self.spacing)] for x in self.hs]))
+
+    def color_from_status(self):
+        self.h = self.statushues[self.status]
+
+    def do_step(self):
+        self.status = (self.status + 1) % (self.spacing * self.hc)
+        self.color_from_status()
+
+    def read_rgb(self):
+        r, g, b = self._hsv_to_rgb(self.h, self.s, self.v)
+        return [int(r), int(g), int(b)]
 
 class RainbowLEDState(BaseLEDState, HSVHelper):
     def __init__(self, id, status=0, saturation=255, value=255, stepsize=1):
