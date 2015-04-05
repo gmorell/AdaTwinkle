@@ -10,17 +10,17 @@ from twisted.protocols import basic
 
 from twisted.web import client
 from helpers import DummySerialDevice
-from led_states import ChaserLEDState
+from led_states import ChaserLEDState, RainbowLEDState, DualHueLEDState
 
 LED_COUNT = 240
 LED_PORT = "/dev/ttyACM0"
 LED_DURATION = 600
 LED_FADE_TIME = 0.05
 LED_FADE_STEPS = 30
-### TODO,
+# ## TODO,
 # try this out with the serial debug device
 # add the various lighting programs and presets to the array
-from run_chaser import SimpleColorChaser
+from run_chaser import SimpleColorChaser, SimpleShiftingColorChaser, RainbowChaser, BouncyChaser
 
 
 class WaitingCounter(object):
@@ -36,6 +36,7 @@ class WaitingCounter(object):
     def proto_value(self):
         return "Waiting for command for %s seconds" % (self.counter / 10)
 
+
 class DoubleWaitingCounter(WaitingCounter):
     def step(self):
         self.counter += 10
@@ -44,46 +45,81 @@ class DoubleWaitingCounter(WaitingCounter):
 class FingerProtocol(basic.LineReceiver):
     avail_progs = {
         "default": {
-            "class":WaitingCounter,
-            "kwargs":{}
+            "class": WaitingCounter,
+            "kwargs": {}
         },
         "alt": {
-            "class":DoubleWaitingCounter,
-            "kwargs":{}
+            "class": DoubleWaitingCounter,
+            "kwargs": {}
         },
         "scc.blue": {
-            "class":SimpleColorChaser,
+            "class": SimpleColorChaser,
             "kwargs": {
-                "led_count":LED_COUNT,
-                "run_duration":LED_DURATION,
-                "fade_time":LED_FADE_TIME,
-                "fade_steps":LED_FADE_STEPS,
-                "state_storage":ChaserLEDState,
-                "hue":128,
-                "fade_by":15,
-                "spacing":30,
+                "led_count": LED_COUNT,
+                "run_duration": LED_DURATION,
+                "fade_time": LED_FADE_TIME,
+                "fade_steps": LED_FADE_STEPS,
+                "state_storage": ChaserLEDState,
+                "hue": 128,
+                "fade_by": 15,
+                "spacing": 30,
             }
         },
         "scc.red": {
-            "class":SimpleColorChaser,
+            "class": SimpleColorChaser,
             "kwargs": {
-                "led_count":LED_COUNT,
-                "run_duration":LED_DURATION,
-                "fade_time":LED_FADE_TIME,
-                "fade_steps":LED_FADE_STEPS,
-                "state_storage":ChaserLEDState,
-                "hue":0,
-                "fade_by":15,
-                "spacing":30,
+                "led_count": LED_COUNT,
+                "run_duration": LED_DURATION,
+                "fade_time": LED_FADE_TIME,
+                "fade_steps": LED_FADE_STEPS,
+                "state_storage": ChaserLEDState,
+                "hue": 0,
+                "fade_by": 15,
+                "spacing": 30,
+            }
+        },
+        "sscc": {
+            "class": SimpleShiftingColorChaser,
+            "kwargs": {
+                "led_count": LED_COUNT,
+                "run_duration": LED_DURATION,
+                "fade_time": LED_FADE_TIME,
+                "fade_steps": LED_FADE_STEPS,
+                "state_storage": ChaserLEDState,
+                "hue": 0,
+                "fade_by": 15,
+                "spacing": 30
+            }
+        },
+        "rainbow": {
+            "class": RainbowChaser,
+            "kwargs": {
+                "led_count": LED_COUNT,
+                "run_duration": LED_DURATION,
+                "fade_time": LED_FADE_TIME,
+                "fade_steps": LED_FADE_STEPS,
+                "state_storage": RainbowLEDState,
+            }
+        },
+        "bouncy": {
+            "class": BouncyChaser,
+            "kwargs": {
+                "led_count": LED_COUNT,
+                "run_duration": LED_DURATION,
+                "fade_time": LED_FADE_TIME,
+                "fade_steps": LED_FADE_STEPS,
+                "state_storage": DualHueLEDState
             }
         }
     }
+
     current_value = "default"
+
     def change_program(self, prog, val):
         self.current_value = val
         self.current_prog = prog
 
-        ## stop the existing one
+        # # stop the existing one
         loop_old = self.factory.loop
         loop_old.stop()
 
@@ -95,7 +131,6 @@ class FingerProtocol(basic.LineReceiver):
         # smth program_args['device'] = self.factory.device
         self.program_args['device'] = self.factory.device
         initiated_prog = self.program_class(**self.program_args)
-
 
         loop_new = task.LoopingCall(initiated_prog.step)
         loop_new.start(0.1)
@@ -163,6 +198,7 @@ class FingerFactory(protocol.ServerFactory):
 
     def setLoop(self, loop):
         self.loop = loop
+
 
 if __name__ == "__main__":
     device = DummySerialDevice()
