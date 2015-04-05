@@ -1,3 +1,4 @@
+from copy import deepcopy
 import time
 from led_states import BaseLEDState
 
@@ -32,3 +33,16 @@ class AdaProtocolHandler(object):
 
     def run(self):
         raise NotImplementedError("Need to implement a run function")
+
+
+class BaseTwistedStep(object):
+    def intermediate_extra_led(self, led):
+        pass
+    def step(self):
+        new_buffer = deepcopy(self.buffer_header())
+        for led in self.leds:
+            led.do_step()
+            self.intermediate_extra_led(led)
+            new_buffer.extend(led.read_rgb())
+        self.device.write(new_buffer)
+        time.sleep(self.fade_time)

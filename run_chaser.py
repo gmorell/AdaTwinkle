@@ -1,6 +1,6 @@
 from copy import deepcopy
 import serial
-from ada_protocol import AdaProtocolHandler
+from ada_protocol import AdaProtocolHandler, BaseTwistedStep
 import time
 from helpers import DummySerialDevice, pattern_list_fill
 from led_states import ChaserLEDState, RainbowLEDState, DualHueLEDState, MultiChaserLEDState, MultiNoSpaceChaseState
@@ -12,7 +12,7 @@ LED_FADE_TIME = 0.05
 LED_FADE_STEPS = 30
 
 
-class SimpleColorChaser(AdaProtocolHandler):
+class SimpleColorChaser(BaseTwistedStep, AdaProtocolHandler):
     def __init__(self, *args, **kwargs):
         self.spacing = kwargs.pop('spacing', 30)
         self.fade_by = kwargs.pop('fade_by', 15)
@@ -36,7 +36,7 @@ class SimpleColorChaser(AdaProtocolHandler):
             time.sleep(self.fade_time)
 
 
-class MultiSimpleColorChaser(AdaProtocolHandler):
+class MultiSimpleColorChaser(BaseTwistedStep, AdaProtocolHandler):
     def __init__(self, *args, **kwargs):
         self.hues = kwargs.pop('hues', [0, 128])
         self.spacing = kwargs.pop('spacing', 30)
@@ -60,7 +60,7 @@ class MultiSimpleColorChaser(AdaProtocolHandler):
             time.sleep(self.fade_time)
 
 
-class MultiSimpleNoSpaceChaser(AdaProtocolHandler):
+class MultiSimpleNoSpaceChaser(BaseTwistedStep, AdaProtocolHandler):
     def __init__(self, *args, **kwargs):
         self.hues = kwargs.pop('hues', [0, 128])
         self.spacing = kwargs.pop('spacing', 30)
@@ -95,8 +95,10 @@ class SimpleShiftingColorChaser(SimpleColorChaser):
             self.device.write(new_buffer)
             time.sleep(self.fade_time)
 
+    def intermediate_extra_led(self, led):
+        led.h = ( led.h + 1 ) % 255
 
-class RainbowChaser(AdaProtocolHandler):
+class RainbowChaser(BaseTwistedStep, AdaProtocolHandler):
     def __init__(self, *args, **kwargs):
         self.saturation = kwargs.pop('saturation', 255)
         self.value = kwargs.pop('value', 255)
@@ -119,7 +121,7 @@ class RainbowChaser(AdaProtocolHandler):
             time.sleep(self.fade_time)
 
 
-class BouncyChaser(AdaProtocolHandler):
+class BouncyChaser(BaseTwistedStep, AdaProtocolHandler):
     def __init__(self, *args, **kwargs):
         self.saturation = kwargs.pop('saturation', 255)
         self.value = kwargs.pop('value', 255)
@@ -185,7 +187,7 @@ if __name__ == "__main__":
                                hues=[0, 128], fade_by=15, spacing=30)
 
     t = MultiSimpleNoSpaceChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME,
-                               fade_steps=LED_FADE_STEPS, state_storage=MultiNoSpaceChaseState,
-                               hues=[0, 128], spacing=15)
+                                 fade_steps=LED_FADE_STEPS, state_storage=MultiNoSpaceChaseState,
+                                 hues=[0, 128], spacing=15)
     t.run()
     s.close()
