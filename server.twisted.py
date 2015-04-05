@@ -1,4 +1,5 @@
 # !/usr/bin/env python
+import serial
 from twisted.internet import defer
 from twisted.internet import protocol
 from twisted.internet import reactor
@@ -50,7 +51,7 @@ class FingerProtocol(basic.LineReceiver):
             "class":DoubleWaitingCounter,
             "kwargs":{}
         },
-        "scc": {
+        "scc.blue": {
             "class":SimpleColorChaser,
             "kwargs": {
                 "led_count":LED_COUNT,
@@ -59,6 +60,19 @@ class FingerProtocol(basic.LineReceiver):
                 "fade_steps":LED_FADE_STEPS,
                 "state_storage":ChaserLEDState,
                 "hue":128,
+                "fade_by":15,
+                "spacing":30,
+            }
+        },
+        "scc.red": {
+            "class":SimpleColorChaser,
+            "kwargs": {
+                "led_count":LED_COUNT,
+                "run_duration":LED_DURATION,
+                "fade_time":LED_FADE_TIME,
+                "fade_steps":LED_FADE_STEPS,
+                "state_storage":ChaserLEDState,
+                "hue":0,
                 "fade_by":15,
                 "spacing":30,
             }
@@ -152,6 +166,7 @@ class FingerFactory(protocol.ServerFactory):
 
 if __name__ == "__main__":
     device = DummySerialDevice()
+    device = serial.Serial(LED_PORT, 115200)
     ctr = WaitingCounter(5)
     l = task.LoopingCall(ctr.step)
     l.start(0.1)
