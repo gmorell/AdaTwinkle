@@ -126,8 +126,8 @@ class FingerProtocol(basic.LineReceiver):
             "class": BouncyChaser,
             "kwargs":{
                 "state_storage": DualHueLEDState,
-                "hue1":235,
-                "hue2":15,
+                "hue1":245,
+                "hue2":10,
                 "value":60
             }
         }
