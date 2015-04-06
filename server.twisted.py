@@ -17,6 +17,13 @@ LED_PORT = "/dev/ttyACM0"
 LED_DURATION = 600
 LED_FADE_TIME = 0.05
 LED_FADE_STEPS = 30
+
+GLOBAL_KWARGS = {
+    "led_count": LED_COUNT,
+    "run_duration": LED_DURATION,
+    "fade_time": LED_FADE_TIME,
+    "fade_steps": LED_FADE_STEPS,
+}
 # ## TODO,
 # try this out with the serial debug device
 # add the various lighting programs and presets to the array
@@ -55,10 +62,6 @@ class FingerProtocol(basic.LineReceiver):
         "scc.blue": {
             "class": SimpleColorChaser,
             "kwargs": {
-                "led_count": LED_COUNT,
-                "run_duration": LED_DURATION,
-                "fade_time": LED_FADE_TIME,
-                "fade_steps": LED_FADE_STEPS,
                 "state_storage": ChaserLEDState,
                 "hue": 128,
                 "fade_by": 15,
@@ -68,10 +71,6 @@ class FingerProtocol(basic.LineReceiver):
         "scc.red": {
             "class": SimpleColorChaser,
             "kwargs": {
-                "led_count": LED_COUNT,
-                "run_duration": LED_DURATION,
-                "fade_time": LED_FADE_TIME,
-                "fade_steps": LED_FADE_STEPS,
                 "state_storage": ChaserLEDState,
                 "hue": 0,
                 "fade_by": 15,
@@ -81,10 +80,6 @@ class FingerProtocol(basic.LineReceiver):
         "sscc": {
             "class": SimpleShiftingColorChaser,
             "kwargs": {
-                "led_count": LED_COUNT,
-                "run_duration": LED_DURATION,
-                "fade_time": LED_FADE_TIME,
-                "fade_steps": LED_FADE_STEPS,
                 "state_storage": ChaserLEDState,
                 "hue": 0,
                 "fade_by": 15,
@@ -94,21 +89,27 @@ class FingerProtocol(basic.LineReceiver):
         "rainbow": {
             "class": RainbowChaser,
             "kwargs": {
-                "led_count": LED_COUNT,
-                "run_duration": LED_DURATION,
-                "fade_time": LED_FADE_TIME,
-                "fade_steps": LED_FADE_STEPS,
                 "state_storage": RainbowLEDState,
             }
         },
         "bouncy": {
             "class": BouncyChaser,
             "kwargs": {
-                "led_count": LED_COUNT,
-                "run_duration": LED_DURATION,
-                "fade_time": LED_FADE_TIME,
-                "fade_steps": LED_FADE_STEPS,
                 "state_storage": DualHueLEDState
+            }
+        },
+        "love": {
+            "class": BouncyChaser,
+            "kwargs":{
+                "hue1":240,
+                "hue2":30,
+            }
+        },
+        "ocean": {
+            "class": BouncyChaser,
+            "kwargs":{
+                "hue1":100,
+                "hue2":180,
             }
         }
     }
@@ -130,6 +131,7 @@ class FingerProtocol(basic.LineReceiver):
         # add the target device to the runner
         # smth program_args['device'] = self.factory.device
         self.program_args['device'] = self.factory.device
+        self.program_args.update(GLOBAL_KWARGS)
         initiated_prog = self.program_class(**self.program_args)
 
         loop_new = task.LoopingCall(initiated_prog.step)
@@ -202,7 +204,7 @@ class FingerFactory(protocol.ServerFactory):
 
 if __name__ == "__main__":
     device = DummySerialDevice()
-    device = serial.Serial(LED_PORT, 115200)
+    # device = serial.Serial(LED_PORT, 115200)
     ctr = WaitingCounter(5)
     l = task.LoopingCall(ctr.step)
     l.start(0.1)
