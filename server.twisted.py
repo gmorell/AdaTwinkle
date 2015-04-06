@@ -101,6 +101,7 @@ class FingerProtocol(basic.LineReceiver):
         "love": {
             "class": BouncyChaser,
             "kwargs":{
+                "state_storage": DualHueLEDState,
                 "hue1":240,
                 "hue2":30,
             }
@@ -108,6 +109,7 @@ class FingerProtocol(basic.LineReceiver):
         "ocean": {
             "class": BouncyChaser,
             "kwargs":{
+                "state_storage": DualHueLEDState,
                 "hue1":100,
                 "hue2":180,
             }
