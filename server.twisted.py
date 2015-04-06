@@ -10,7 +10,7 @@ from twisted.protocols import basic
 
 from twisted.web import client
 from helpers import DummySerialDevice
-from led_states import ChaserLEDState, RainbowLEDState, DualHueLEDState
+from led_states import ChaserLEDState, RainbowLEDState, DualHueLEDState, MultiChaserLEDState, MultiNoSpaceChaseState
 
 LED_COUNT = 240
 LED_PORT = "/dev/ttyACM0"
@@ -135,6 +135,7 @@ class FingerProtocol(basic.LineReceiver):
         "mscc": {
             "class": MultiSimpleColorChaser,
             "kwargs": {
+                "state_storage": MultiChaserLEDState,
                 "hues": [0, 128],
                 "fade_by": 15,
                 "spacing": 30
@@ -143,6 +144,7 @@ class FingerProtocol(basic.LineReceiver):
         "msnsc": {
             "class": MultiSimpleNoSpaceChaser,
             "kwargs": {
+                "state_storage": MultiNoSpaceChaseState,
                 "hues":[0,64,128,192],
                 "spacing":15,
             }
