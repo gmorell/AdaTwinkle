@@ -128,7 +128,7 @@ class FingerProtocol(basic.LineReceiver):
                 "state_storage": DualHueLEDState,
                 "hue1":235,
                 "hue2":15,
-                "saturation":60
+                "value":60
             }
         }
     }
