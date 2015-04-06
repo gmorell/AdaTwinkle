@@ -102,8 +102,8 @@ class FingerProtocol(basic.LineReceiver):
             "class": BouncyChaser,
             "kwargs":{
                 "state_storage": DualHueLEDState,
-                "hue1":240,
-                "hue2":30,
+                "hue1":230,
+                "hue2":20,
             }
         },
         "ocean": {
@@ -111,7 +111,7 @@ class FingerProtocol(basic.LineReceiver):
             "kwargs":{
                 "state_storage": DualHueLEDState,
                 "hue1":90,
-                "hue2":180,
+                "hue2":160,
             }
         },
         "forest": {
@@ -120,6 +120,15 @@ class FingerProtocol(basic.LineReceiver):
                 "state_storage": DualHueLEDState,
                 "hue1":60,
                 "hue2":90,
+            }
+        },
+        "night": {
+            "class": BouncyChaser,
+            "kwargs":{
+                "state_storage": DualHueLEDState,
+                "hue1":235,
+                "hue2":15,
+                "saturation":60
             }
         }
     }
