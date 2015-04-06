@@ -20,7 +20,7 @@ LED_FADE_STEPS = 30
 
 GLOBAL_KWARGS = {
     "led_count": LED_COUNT,
-    "_duration": LED_DURATION,
+    "run_duration": LED_DURATION,
     "fade_time": LED_FADE_TIME,
     "fade_steps": LED_FADE_STEPS,
 }
