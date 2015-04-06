@@ -189,5 +189,7 @@ if __name__ == "__main__":
     t = MultiSimpleNoSpaceChaser(device=s, led_count=LED_COUNT, run_duration=LED_DURATION, fade_time=LED_FADE_TIME,
                                  fade_steps=LED_FADE_STEPS, state_storage=MultiNoSpaceChaseState,
                                  hues=[0, 128], spacing=15)
+
+    # todo add some stuff that takes input of a few full HSV sets, so it can do 'murika mode
     t.run()
     s.close()

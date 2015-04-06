@@ -27,7 +27,8 @@ GLOBAL_KWARGS = {
 # ## TODO,
 # try this out with the serial debug device
 # add the various lighting programs and presets to the array
-from run_chaser import SimpleColorChaser, SimpleShiftingColorChaser, RainbowChaser, BouncyChaser
+from run_chaser import SimpleColorChaser, SimpleShiftingColorChaser, RainbowChaser, BouncyChaser, MultiSimpleColorChaser, \
+    MultiSimpleNoSpaceChaser
 
 
 class WaitingCounter(object):
@@ -100,35 +101,50 @@ class FingerProtocol(basic.LineReceiver):
         },
         "love": {
             "class": BouncyChaser,
-            "kwargs":{
+            "kwargs": {
                 "state_storage": DualHueLEDState,
-                "hue1":230,
-                "hue2":20,
+                "hue1": 230,
+                "hue2": 20,
             }
         },
         "ocean": {
             "class": BouncyChaser,
-            "kwargs":{
+            "kwargs": {
                 "state_storage": DualHueLEDState,
-                "hue1":90,
-                "hue2":160,
+                "hue1": 90,
+                "hue2": 160,
             }
         },
         "forest": {
             "class": BouncyChaser,
-            "kwargs":{
+            "kwargs": {
                 "state_storage": DualHueLEDState,
-                "hue1":60,
-                "hue2":90,
+                "hue1": 60,
+                "hue2": 90,
             }
         },
         "night": {
             "class": BouncyChaser,
-            "kwargs":{
+            "kwargs": {
                 "state_storage": DualHueLEDState,
-                "hue1":245,
-                "hue2":10,
-                "value":60
+                "hue1": 245,
+                "hue2": 10,
+                "value": 60
+            }
+        },
+        "mscc": {
+            "class": MultiSimpleColorChaser,
+            "kwargs": {
+                "hues": [0, 128],
+                "fade_by": 15,
+                "spacing": 30
+            }
+        },
+        "msnsc": {
+            "class": MultiSimpleNoSpaceChaser,
+            "kwargs": {
+                "hues":[0,64,128,192],
+                "spacing":15,
             }
         }
     }
@@ -143,7 +159,7 @@ class FingerProtocol(basic.LineReceiver):
         loop_old = self.factory.loop
         loop_old.stop()
 
-        ## setup
+        # # setup
         self.program_class = prog['class']
         self.program_args = prog['kwargs']
         # TODO:
