@@ -206,7 +206,7 @@ class FingerFactory(protocol.ServerFactory):
 
 if __name__ == "__main__":
     device = DummySerialDevice()
-    # device = serial.Serial(LED_PORT, 115200)
+    device = serial.Serial(LED_PORT, 115200)
     ctr = WaitingCounter(5)
     l = task.LoopingCall(ctr.step)
     l.start(0.1)
