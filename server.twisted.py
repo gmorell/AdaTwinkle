@@ -110,7 +110,7 @@ class FingerProtocol(basic.LineReceiver):
             "class": BouncyChaser,
             "kwargs":{
                 "state_storage": DualHueLEDState,
-                "hue1":100,
+                "hue1":90,
                 "hue2":180,
             }
         },
@@ -118,8 +118,8 @@ class FingerProtocol(basic.LineReceiver):
             "class": BouncyChaser,
             "kwargs":{
                 "state_storage": DualHueLEDState,
-                "hue1":80,
-                "hue2":130,
+                "hue1":60,
+                "hue2":90,
             }
         }
     }
