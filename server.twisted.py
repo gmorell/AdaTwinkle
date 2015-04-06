@@ -20,7 +20,7 @@ LED_FADE_STEPS = 30
 
 GLOBAL_KWARGS = {
     "led_count": LED_COUNT,
-    "run_duration": LED_DURATION,
+    "_duration": LED_DURATION,
     "fade_time": LED_FADE_TIME,
     "fade_steps": LED_FADE_STEPS,
 }
@@ -112,6 +112,14 @@ class FingerProtocol(basic.LineReceiver):
                 "state_storage": DualHueLEDState,
                 "hue1":100,
                 "hue2":180,
+            }
+        },
+        "forest": {
+            "class": BouncyChaser,
+            "kwargs":{
+                "state_storage": DualHueLEDState,
+                "hue1":80,
+                "hue2":130,
             }
         }
     }
