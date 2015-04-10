@@ -131,6 +131,14 @@ class FingerProtocol(basic.LineReceiver):
                 "hue2": 210,
             }
         },
+        "sunny": {
+            "class": BouncyChaser,
+            "kwargs": {
+                "state_storage": DualHueLEDState,
+                "hue1": 34,
+                "hue2": 42,
+            }
+        },
         "night": {
             "class": BouncyChaser,
             "kwargs": {
