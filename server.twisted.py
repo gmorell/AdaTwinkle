@@ -1,6 +1,7 @@
 # !/usr/bin/env python
 import cgi
 import json
+import os
 import serial
 from twisted.application import internet
 from twisted.application import service
@@ -17,6 +18,7 @@ from twisted.web import client
 from twisted.web import resource
 from twisted.web import server
 from twisted.web import static
+import txtemplate
 
 from simpleprogs import WaitingCounter
 from helpers import DummySerialDevice
@@ -33,6 +35,8 @@ GLOBAL_KWARGS = {
     "fade_time": LED_FADE_TIME,
     "fade_steps": LED_FADE_STEPS,
 }
+
+TEMPLATE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
 # ## TODO,
 # try this out with the serial debug device
 # add the various lighting programs and presets to the array
@@ -111,17 +115,27 @@ class LightFactory(protocol.ServerFactory):
 class LightHTMLTree(resource.Resource):
     def __init__(self, service):
         resource.Resource.__init__(self)
+        self.loader = txtemplate.Jinja2TemplateLoader(TEMPLATE_DIR)
+
         self.service = service
 
     def render_GET(self, request):
-        request.setHeader("Content-Type", "application/json; charset=utf-8")
-        r_dict = {
-            "status": "/status",
-            "programs": "/progs",
-            "set": "/set",
-        }
-        retval = json.dumps(r_dict)
-        return retval
+        template_name = "base.jinja2"
+        template = self.loader.load(template_name)
+
+        context = {}
+        # get data
+
+        progs = self.service.available_progs.keys()
+        context['progs'] = progs
+        def cb(content):
+            request.write(content)
+            request.setResponseCode(200)
+            request.finish()
+
+        d = template.render(**context)
+        d.addCallback(cb)
+        return server.NOT_DONE_YET
 
 
 class LightStatus(resource.Resource):
@@ -271,6 +285,9 @@ class LightService(service.Service):
 
         se = LightProgramSetter(self)
         r.putChild("set", se)
+
+        ass = static.File('assets')
+        r.putChild("assets", ass)
 
         return r
 
