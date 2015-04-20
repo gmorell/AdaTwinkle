@@ -1,8 +1,8 @@
 from simpleprogs import WaitingCounter, DoubleWaitingCounter
 from led_states import ChaserLEDState, RainbowLEDState, DualHueLEDState, MultiChaserLEDState, MultiNoSpaceChaseState
-from run_chaser import SimpleColorChaser, SimpleShiftingColorChaser, RainbowChaser, BouncyChaser, \
-    MultiSimpleColorChaser, \
-    MultiSimpleNoSpaceChaser
+from run_chaser import SimpleColorChaser, SimpleShiftingColorChaser
+from run_chaser import RainbowChaser, BouncyChaser
+from run_chaser import MultiSimpleColorChaser, MultiSimpleNoSpaceChaser
 
 avail_progs = {
     "default": {

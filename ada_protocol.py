@@ -34,6 +34,9 @@ class AdaProtocolHandler(object):
     def run(self):
         raise NotImplementedError("Need to implement a run function")
 
+    def proto_value(self):
+        return "Been running command %s seconds" % (self.counter / 10)
+
 
 class BaseTwistedStep(object):
     def intermediate_extra_led(self, led):
