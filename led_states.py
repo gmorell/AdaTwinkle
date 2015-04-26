@@ -299,3 +299,7 @@ class DualHueLEDState(BaseLEDState, HSVHelper):
         # from led_states import DualHueLEDState
         # x = DualHueLEDState(id=0, hue1=30, hue2=40)
         # x.do_step(), x.at_target(), x.status, x.target
+
+
+class ChaoticPixelState(BaseLEDState):
+    pass

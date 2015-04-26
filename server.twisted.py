@@ -120,7 +120,7 @@ class LightHTMLTree(resource.Resource):
         self.service = service
 
     def render_GET(self, request):
-        template_name = "base.jinja2"
+        template_name = "landing.jinja2"
         template = self.loader.load(template_name)
 
         context = {}

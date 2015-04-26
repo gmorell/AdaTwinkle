@@ -9,10 +9,6 @@ avail_progs = {
         "class": WaitingCounter,
         "kwargs": {}
     },
-    "alt": {
-        "class": DoubleWaitingCounter,
-        "kwargs": {}
-    },
     "scc.blue": {
         "class": SimpleColorChaser,
         "kwargs": {

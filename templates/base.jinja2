@@ -2,48 +2,26 @@
 <html>
     <head>
 
-        <title>jQuery Mobile page</title>
+        <title>Lambent Aether</title>
         <meta charset="utf-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="/assets/css/LambentJQMobile.min.css"/>
-        <link rel="stylesheet" href="/assets/css/jquery.mobile.icons.min.css"/>
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
         <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-        <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+        <link href='http://fonts.googleapis.com/css?family=Archivo+Black' rel='stylesheet' type='text/css'>
 
+         <!-- Compiled and minified CSS -->
+       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.96.1/css/materialize.min.css">
+
+        <!-- Compiled and minified JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.96.1/js/materialize.min.js"></script>
+        {% block extrahead %}
+        {% endblock %}
     </head>
     <body>
-        <div data-role="page" data-theme="a" id="demo-page" class="my-page" data-url="demo-page">
+        {% block body %}
             <div data-role="header">
-                <h1>Lambent Aether</h1>
-            </div><!-- /header -->
-            <div data-role="content" class="ui-content">
-                <div class="ui-grid-b my-breakpoint">
-                    {% for p in progs %}
-                    <div class="ui-block-b">
-                        <a href="/set?prog={{ p }}" class="buttan" data-role="button">
-
-                        <br />
-                        <h1>{{ p }}</h1>
-                        <br />
-                        </a>
-                    </div>
-                    {% endfor %}
-                </div>
+                 <h1>Lambent Aether</h1>
             </div>
-        </div>
-        <script type="text/javascript">
-            $( document ).ready(function() {
-                $('.buttan').click(function (event) {
-                    event.preventDefault();
-                    $.ajax({
-                        url: $(this).attr('href'), success: function (response) {
-                            console.log($(this).attr('href'))
-                        }
-                    })
-                    return false; //for good measure
-                });
-            });
-        </script>
+            body extend me
+        {% endblock %}
     </body>
 </html>
