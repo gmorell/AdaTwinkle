@@ -115,7 +115,7 @@ avail_progs = {
             "spacing": 15,
         }
     },
-    "chaos": {
+    "entropy": {
         "class": ChaosPixel,
         "kwargs": {
             "state_storage": ChaoticPixelState,

@@ -1,7 +1,6 @@
 from copy import deepcopy
 import serial
 from ada_protocol import AdaProtocolHandler, BaseTwistedStep
-import random
 import time
 from helpers import DummySerialDevice, pattern_list_fill
 from led_states import ChaserLEDState, RainbowLEDState, DualHueLEDState, MultiChaserLEDState, MultiNoSpaceChaseState
@@ -185,7 +184,6 @@ class ChaosPixel(BaseTwistedStep, AdaProtocolHandler):
 
     def init_leds(self):
         for led in self.leds:
-            led.h = random.randint(1,255)
             led.status = led.id % 255
 
     def run(self):
