@@ -1,5 +1,6 @@
 from itertools import chain
 from helpers import HSVHelper
+import random
 
 
 class BaseLEDState(object):
@@ -89,10 +90,10 @@ class DumbRGBLEDStepState(BaseLEDState):
 
 
 class HSVAwareLEDStepState(BaseLEDState, HSVHelper):
-    def __init__(self, h=0, s=0, v=0, step_size=3, id=0):
-        self.h = h
-        self.s = s
-        self.v = v
+    def __init__(self, hue=0, saturation=0, value=0, step_size=1, id=0):
+        self.h = hue
+        self.s = saturation
+        self.v = value
         self.sz = step_size
         self.id = id
 
@@ -301,5 +302,45 @@ class DualHueLEDState(BaseLEDState, HSVHelper):
         # x.do_step(), x.at_target(), x.status, x.target
 
 
-class ChaoticPixelState(BaseLEDState):
-    pass
+class ChaoticPixelState(BaseLEDState, HSVHelper):
+    def __init__(self, hue=0, saturation=0, value=0, step_size=3, id=0):
+        self.h = hue
+        self.s = saturation
+        self.v = value
+        self.sz = step_size
+        self.id = id
+
+        self.h_t = 0
+
+    def at_zeroes(self):
+        return self.s == self.v == 0
+
+    def at_target(self):  # to write the next values
+        if self.h == self.h_t:
+            return True
+        else:
+            return False
+
+    def set_new_step_target(self):
+        choice = random.randint(1,255)
+        self.h_t = choice
+
+    def do_step(self):
+        self.h = self._step(self.h, self.h_t)
+        if self.at_target():
+            self.set_new_step_target()
+
+    def read(self):
+        return [self.h, self.s, self.v]
+
+    def read_rgb(self):
+        r, g, b = self._hsv_to_rgb(self.h, self.s, self.v)
+        return [int(r), int(g), int(b)]
+
+    def read_t(self):
+        return [self.h_t, self.s_t, self.v_t]
+
+    def read_t_rgb(self):
+        r, g, b = self._hsv_to_rgb(self.h_t, self.s_t, self.v_t)
+        return [r, g, b]
+
