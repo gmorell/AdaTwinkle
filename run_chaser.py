@@ -229,6 +229,13 @@ class EntropicPixel(BaseTwistedStep, AdaProtocolHandler):
     def final_extra_group(self):
         all_states = [s.cycles_state for s in self.leds]
         min_state = min(all_states)
+        print "MIN"
+        print "MIN"
+        print "MIN"
+        print "MIN"
+        print "MIN"
+        print min_state
+
         if min_state > self.max_cycles:
             print "RESET"
             print "RESET"
