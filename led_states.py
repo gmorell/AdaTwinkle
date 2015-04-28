@@ -352,6 +352,7 @@ class EntropicPixelState(BaseLEDState, HSVHelper):
 
     def at_target(self):  # to write the next values
         if self.h == self.h_t:
+            self.cycles_state += 1
             return True
         else:
             return False
@@ -369,7 +370,7 @@ class EntropicPixelState(BaseLEDState, HSVHelper):
         if self.at_target():
             self.set_new_step_target()
 
-        self.cycles_state += 1
+        # self.cycles_state += 1
 
     def read_rgb(self):
         r, g, b = self._hsv_to_rgb(self.h, self.s, self.v)
