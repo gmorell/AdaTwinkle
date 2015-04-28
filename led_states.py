@@ -336,7 +336,7 @@ class ChaoticPixelState(BaseLEDState, HSVHelper):
 
 
 class EntropicPixelState(BaseLEDState, HSVHelper):
-    def __init__(self, hue=0, saturation=0, value=0, step_size=3, id=0, max_cycles=7):
+    def __init__(self, hue=0, saturation=0, value=0, step_size=3, id=0, max_cycles=12):
         self.h = hue
         self.s = saturation
         self.v = value
@@ -352,7 +352,11 @@ class EntropicPixelState(BaseLEDState, HSVHelper):
 
     def at_target(self):  # to write the next values
         if self.h == self.h_t:
-            self.cycles_state += 1
+            # self.cycles_state += 1
+            # TODO:
+            # add a lock in a diff version of the class with this enabled
+            # for the final_extra_group function to find,
+            # and when all are set to the lock, unlock
             return True
         else:
             return False
@@ -370,7 +374,7 @@ class EntropicPixelState(BaseLEDState, HSVHelper):
         if self.at_target():
             self.set_new_step_target()
 
-        # self.cycles_state += 1
+        self.cycles_state += 1
 
     def read_rgb(self):
         r, g, b = self._hsv_to_rgb(self.h, self.s, self.v)
