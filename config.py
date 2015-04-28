@@ -1,7 +1,7 @@
 from simpleprogs import WaitingCounter, DoubleWaitingCounter
 from led_states import ChaserLEDState, RainbowLEDState, DualHueLEDState, MultiChaserLEDState, MultiNoSpaceChaseState, \
-    HSVAwareLEDStepState, ChaoticPixelState
-from run_chaser import SimpleColorChaser, SimpleShiftingColorChaser, ChaosPixel
+    HSVAwareLEDStepState, ChaoticPixelState, EntropicPixelState
+from run_chaser import SimpleColorChaser, SimpleShiftingColorChaser, ChaosPixel, EntropicPixel
 from run_chaser import RainbowChaser, BouncyChaser
 from run_chaser import MultiSimpleColorChaser, MultiSimpleNoSpaceChaser
 
@@ -115,10 +115,16 @@ avail_progs = {
             "spacing": 15,
         }
     },
-    "entropy": {
+    "chaos": {
         "class": ChaosPixel,
         "kwargs": {
             "state_storage": ChaoticPixelState,
+        }
+    },
+    "entropy": {
+        "class": EntropicPixel,
+        "kwargs" : {
+            "state_storage": EntropicPixelState
         }
     }
 }

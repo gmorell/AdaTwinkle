@@ -1,4 +1,5 @@
 from copy import deepcopy
+import random
 import serial
 from ada_protocol import AdaProtocolHandler, BaseTwistedStep
 import time
@@ -194,6 +195,44 @@ class ChaosPixel(BaseTwistedStep, AdaProtocolHandler):
                 new_buffer.extend(led.read_rgb())
             self.device.write(new_buffer)
             time.sleep(self.fade_time)
+
+
+class EntropicPixel(BaseTwistedStep, AdaProtocolHandler):
+    def __init__(self, *args, **kwargs):
+        self.saturation = kwargs.pop('saturation', 255)
+        self.value = kwargs.pop('value', 255)
+        self.max_cycles = kwargs.pop('value', 7)
+
+        kwargs['state_kwargs'] = {
+            "saturation": self.saturation,
+            "value": self.value,
+            "max_cycles": self.max_cycles,
+        }
+
+        super(EntropicPixel, self).__init__(*args, **kwargs)
+
+        self.init_leds()
+
+    def init_leds(self):
+        for led in self.leds:
+            led.status = led.id % 255
+
+    def run(self):
+        while time.time() < self.t_end:
+            new_buffer = deepcopy(self.buffer_header())
+            for led in self.leds:
+                led.do_step()
+                new_buffer.extend(led.read_rgb())
+            self.device.write(new_buffer)
+            time.sleep(self.fade_time)
+
+    def intermediate_extra_led(self):
+        all_states = [s.cycles_state for s in self.leds]
+        min_state = min(all_states)
+        if min_state > self.max_cycles:
+            x = random.randint(1,255)
+            for led in self.leds:
+                led.set_new_step_target(target=x)
 
 if __name__ == "__main__":
     # for debugging

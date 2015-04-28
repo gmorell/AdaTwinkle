@@ -17,17 +17,21 @@
     </nav>
         <div data-role="content" class="ui-content">
             {% for p in progs %}
-                <a href="/set?prog={{ p }}" class="buttan" >      
+                      
                 <div class="square waves-effect waves-light light-blue accent-1">
+
                     <div class="content">
+                        <a href="/set?prog={{ p }}" class="buttan" >
                         <div class="table">
                             <div class="table-cell">
                                 {{ p }}
                             </div>
                         </div>
+                        </a>
                     </div>
+
                 </div>
-                </a>
+
             {% endfor %}
         </div>
     </div>
