@@ -226,7 +226,7 @@ class EntropicPixel(BaseTwistedStep, AdaProtocolHandler):
             self.device.write(new_buffer)
             time.sleep(self.fade_time)
 
-    def intermediate_extra_led(self):
+    def final_extra_group0(self):
         all_states = [s.cycles_state for s in self.leds]
         min_state = min(all_states)
         if min_state > self.max_cycles:

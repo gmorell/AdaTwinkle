@@ -330,6 +330,10 @@ class ChaoticPixelState(BaseLEDState, HSVHelper):
         if self.at_target():
             self.set_new_step_target()
 
+    def read_rgb(self):
+        r, g, b = self._hsv_to_rgb(self.h, self.s, self.v)
+        return [int(r), int(g), int(b)]
+
 
 class EntropicPixelState(BaseLEDState, HSVHelper):
     def __init__(self, hue=0, saturation=0, value=0, step_size=3, id=0, max_cycles=7):
@@ -366,3 +370,7 @@ class EntropicPixelState(BaseLEDState, HSVHelper):
             self.set_new_step_target()
 
         self.cycles_state += 1
+
+    def read_rgb(self):
+        r, g, b = self._hsv_to_rgb(self.h, self.s, self.v)
+        return [int(r), int(g), int(b)]
