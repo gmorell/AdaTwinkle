@@ -317,8 +317,8 @@ class LightService(service.Service):
         self.service_avail_filters = avail_filters
         self.service_enabled_filters = collections.OrderedDict()
         # these next 2 lines for testing
-        self.service_enabled_filters[uuid.uuid4().hex[0:4].upper()] = ['GRB',self.service_avail_filters['GRB']()]
-        self.service_enabled_filters[uuid.uuid4().hex[0:4].upper()] = ['GRB',self.service_avail_filters['GRB']()]
+        # self.service_enabled_filters[uuid.uuid4().hex[0:4].upper()] = ['GRB',self.service_avail_filters['GRB']()]
+        # self.service_enabled_filters[uuid.uuid4().hex[0:4].upper()] = ['GRB',self.service_avail_filters['GRB']()]
 
         self.counter.filters = self.service_enabled_filters
 
