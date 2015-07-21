@@ -365,6 +365,8 @@ class LightService(service.Service):
 
         print self.program_args
         initiated_prog = self.program_class(**self.program_args)
+        # doing it here, prevents that flicker
+        initiated_prog.filters = self.get_filters()
 
         loop_new = task.LoopingCall(initiated_prog.step)
         loop_new.start(self.step_time)
@@ -372,8 +374,12 @@ class LightService(service.Service):
         self.setCntr(initiated_prog)
         self.update_filters()
 
+    def get_filters(self):
+        filters = [f[1] for f in self.service_enabled_filters.values()]
+        return filters
+
     def update_filters(self):
-        self.counter.filters = [f[1] for f in self.service_enabled_filters.values()]
+        self.counter.filters = self.get_filters()
 
     def getLightFactory(self):
         f = protocol.ServerFactory()
