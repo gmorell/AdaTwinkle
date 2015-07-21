@@ -4,4 +4,5 @@ class RGBtoGRBLambentOutputFilter(object):
         return val
 
 class InvertLambentOutputFilter(object):
-    pass
+    def do_filter(self, rgbvals):
+        return [255-rgbvals[0],255-rgbvals[1],255-rgbvals[2]]

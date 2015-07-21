@@ -1,4 +1,4 @@
-from filters.colors import RGBtoGRBLambentOutputFilter
+from filters.colors import RGBtoGRBLambentOutputFilter, InvertLambentOutputFilter
 from simpleprogs import WaitingCounter, DoubleWaitingCounter
 from led_states import ChaserLEDState, RainbowLEDState, DualHueLEDState, MultiChaserLEDState, MultiNoSpaceChaseState, \
     HSVAwareLEDStepState, ChaoticPixelState, EntropicPixelState
@@ -132,4 +132,5 @@ avail_progs = {
 
 avail_filters = {
     "GRB": RGBtoGRBLambentOutputFilter,
+    "INV": InvertLambentOutputFilter,
 }
