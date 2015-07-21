@@ -1,8 +1,10 @@
 # !/usr/bin/env python
+import collections
 import cgi
 import json
 import os
 import serial
+import uuid
 from twisted.application import internet
 from twisted.application import service
 
@@ -42,7 +44,7 @@ TEMPLATE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templat
 # add the various lighting programs and presets to the array
 
 
-from config import avail_progs
+from config import avail_progs, avail_filters
 
 
 class TelnetLightProtocol(basic.LineReceiver):
@@ -204,9 +206,105 @@ class LightProgramList(resource.Resource):
         return retval
 
 
+class LightProgramEnabledFilterList(resource.Resource):
+    def __init__(self, service):
+        resource.Resource.__init__(self)
+        self.service = service
+
+    def render_GET(self, request):
+        request.setHeader("Content-Type", "application/json; charset=utf-8")
+        status = collections.OrderedDict([[k,v[0]] for k,v in self.service.service_enabled_filters.iteritems()])
+        retval = json.dumps({"enabled_filters": status})
+        return retval
+
+class LightProgramRMFilter(resource.Resource):
+    def __init__(self, service):
+        resource.Resource.__init__(self)
+        self.service = service
+
+    def handle_get_post(self, filt):
+        if filt:
+            val = filt[0]
+            if val not in self.service.service_enabled_filters.keys():
+                return json.dumps(
+                    {
+                        "status": "ERROR_NON_EXISTENT_ENABLED_FILTER_KEY",
+                        "value": val
+                    }
+                )
+            else:
+                filt = self.service.service_enabled_filters.pop(val)
+                self.service.update_filters()
+                return json.dumps(
+                    {
+                        "status": "SUCCESS_REMOVED_FILTER",
+                        "value": val
+                    }
+                )
+
+        return json.dumps(
+            {
+                "status": "ERROR_MISSING_PARAMETER",
+                "value": "filt"
+            }
+        )
+
+    def render_GET(self, request):
+        request.setHeader("Content-Type", "application/json; charset=utf-8")
+        filt = request.args.get('filt', None)
+        return self.handle_get_post(filt)
+
+    def render_POST(self, request):
+        request.setHeader("Content-Type", "application/json; charset=utf-8")
+        filt = request.args.get('filt', None)
+        return self.handle_get_post(filt)
+
+
+class LightProgramAddFilter(resource.Resource):
+    def __init__(self, service):
+        resource.Resource.__init__(self)
+        self.service = service
+
+    def handle_get_post(self, filt):
+        if filt:
+            val = filt[0]
+            if val not in self.service.service_avail_filters.keys():
+                return json.dumps(
+                    {
+                        "status": "ERROR_NON_EXISTENT_FILTER_KEY",
+                        "value": val
+                    }
+                )
+            else:
+                self.service.service_enabled_filters[uuid.uuid4().hex[0:4].upper()] = [val,self.service.service_avail_filters[val]()]
+                self.service.update_filters()
+                return json.dumps(
+                    {
+                        "status": "SUCCESS_ADDED_FILTER",
+                        "value": val
+                    }
+                )
+
+        return json.dumps(
+            {
+                "status": "ERROR_MISSING_PARAMETER",
+                "value": "filt"
+            }
+        )
+
+    def render_GET(self, request):
+        request.setHeader("Content-Type", "application/json; charset=utf-8")
+        filt = request.args.get('filt', None)
+        return self.handle_get_post(filt)
+
+    def render_POST(self, request):
+        request.setHeader("Content-Type", "application/json; charset=utf-8")
+        filt = request.args.get('filt', None)
+        return self.handle_get_post(filt)
+
 class LightService(service.Service):
     def __init__(self, counter=None, loop=None, device=DummySerialDevice(), step_time=0.1, current_value="default",
-                 avail_progs=None, **kwargs):
+                 avail_progs=None, avail_filters = {}, **kwargs):
         self.current_value = current_value
         self.step_time = step_time
         self.available_progs = avail_progs
@@ -215,6 +313,14 @@ class LightService(service.Service):
             self.counter = WaitingCounter(5)
         else:
             self.counter = counter
+
+        self.service_avail_filters = avail_filters
+        self.service_enabled_filters = collections.OrderedDict()
+        # these next 2 lines for testing
+        self.service_enabled_filters[uuid.uuid4().hex[0:4].upper()] = ['GRB',self.service_avail_filters['GRB']()]
+        self.service_enabled_filters[uuid.uuid4().hex[0:4].upper()] = ['GRB',self.service_avail_filters['GRB']()]
+
+        self.counter.filters = self.service_enabled_filters
 
         if not loop:
             self.loop = task.LoopingCall(self.counter.step)
@@ -226,6 +332,8 @@ class LightService(service.Service):
             self.device = device
         else:
             self.device = device
+
+        self.update_filters()
 
     def getCntr(self):
         return self.counter
@@ -254,12 +362,18 @@ class LightService(service.Service):
 
         self.program_args['device'] = self.device
         self.program_args.update(GLOBAL_KWARGS)
+
+        print self.program_args
         initiated_prog = self.program_class(**self.program_args)
 
         loop_new = task.LoopingCall(initiated_prog.step)
         loop_new.start(self.step_time)
         self.setLoop(loop_new)
         self.setCntr(initiated_prog)
+        self.update_filters()
+
+    def update_filters(self):
+        self.counter.filters = [f[1] for f in self.service_enabled_filters.values()]
 
     def getLightFactory(self):
         f = protocol.ServerFactory()
@@ -289,6 +403,15 @@ class LightService(service.Service):
         ass = static.File('assets')
         r.putChild("assets", ass)
 
+        filt_enabled = LightProgramEnabledFilterList(self)
+        r.putChild("filt_en", filt_enabled)
+
+        filt_delete = LightProgramRMFilter(self)
+        r.putChild("filt_rm", filt_delete)
+
+        filt_add = LightProgramAddFilter(self)
+        r.putChild("filt_add", filt_add)
+
         return r
 
 
@@ -303,7 +426,7 @@ if __name__ == "__main__":
     # reactor.run()
 
 application = service.Application('lambent_aether')  # , uid=1, gid=1)
-s = LightService(avail_progs=avail_progs)
+s = LightService(avail_progs=avail_progs, avail_filters=avail_filters)
 serviceCollection = service.IServiceCollection(application)
 s.setServiceParent(serviceCollection)
 internet.TCPServer(8660, s.getLightFactory()).setServiceParent(serviceCollection)

@@ -1,0 +1,2 @@
+class PIRFadeLambentOutputFilter(object):
+    pass
