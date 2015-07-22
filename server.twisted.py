@@ -1,9 +1,10 @@
 # !/usr/bin/env python
 import collections
-import cgi
+from importlib import import_module
 import json
 import os
 import serial
+import sys
 import uuid
 from twisted.application import internet
 from twisted.application import service
@@ -303,11 +304,28 @@ class LightProgramAddFilter(resource.Resource):
         return self.handle_get_post(filt)
 
 class LightService(service.Service):
-    def __init__(self, counter=None, loop=None, device=serial.Serial(LED_PORT, 115200), step_time=0.1, current_value="default",
-                 avail_progs=None, avail_filters = {}, **kwargs):
+    def __init__(self, counter=None, loop=None, device = DummySerialDevice(), step_time=0.1, current_value="default",
+                 avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, **kwargs):
         self.current_value = current_value
         self.step_time = step_time
         self.available_progs = avail_progs
+
+        if not device:
+            self.device = device
+        else:
+            self.device = device
+
+        if default_prog:
+            if default_prog in self.available_progs.keys():
+                prog = self.available_progs.get(default_prog)
+                # self.change_program(prog, default_prog)
+                prog_kwargs = prog['kwargs']
+                prog_kwargs['device'] = self.device
+                prog_kwargs.update(GLOBAL_KWARGS)
+                counter = prog['class'](**prog_kwargs)
+                self.current_value = default_prog
+            else:
+                sys.stderr.write("SELECTED (%s) NOT IN (%s)" % (default_prog, ",".join(i for i in self.available_progs)))
 
         if not counter:
             self.counter = WaitingCounter(5)
@@ -316,11 +334,17 @@ class LightService(service.Service):
 
         self.service_avail_filters = avail_filters
         self.service_enabled_filters = collections.OrderedDict()
+        for filter in default_filters:
+            try:
+                self.service_enabled_filters[uuid.uuid4().hex[0:4].upper()] = [filter,self.service_avail_filters[filter]()]
+            except:
+                sys.stderr.write("LAMBENT FILTER DIDN'T EXIST '" + filter + "', SKIPPING\n")
+
         # these next 2 lines for testing
         # self.service_enabled_filters[uuid.uuid4().hex[0:4].upper()] = ['GRB',self.service_avail_filters['GRB']()]
         # self.service_enabled_filters[uuid.uuid4().hex[0:4].upper()] = ['GRB',self.service_avail_filters['GRB']()]
 
-        self.counter.filters = self.service_enabled_filters
+        self.counter.filters = self.get_filters()
 
         if not loop:
             self.loop = task.LoopingCall(self.counter.step)
@@ -328,10 +352,6 @@ class LightService(service.Service):
         else:
             self.loop = loop
 
-        if not device:
-            self.device = device
-        else:
-            self.device = device
 
         self.update_filters()
 
@@ -353,8 +373,9 @@ class LightService(service.Service):
         self.current_value = val
 
         # # stop the existing one
-        loop_old = self.loop
-        loop_old.stop()
+        if hasattr(self,"loop"):
+            loop_old = self.loop
+            loop_old.stop()
 
         # # setup
         self.program_class = prog['class']
@@ -363,7 +384,6 @@ class LightService(service.Service):
         self.program_args['device'] = self.device
         self.program_args.update(GLOBAL_KWARGS)
 
-        print self.program_args
         initiated_prog = self.program_class(**self.program_args)
         # doing it here, prevents that flicker
         initiated_prog.filters = self.get_filters()
@@ -432,7 +452,41 @@ if __name__ == "__main__":
     # reactor.run()
 
 application = service.Application('lambent_aether')  # , uid=1, gid=1)
-s = LightService(avail_progs=avail_progs, avail_filters=avail_filters)
+# lets read the room
+if os.environ.has_key("LAMBENTCONFIG"):
+    conf_path = os.environ.get("LAMBENTCONFIG")
+    try:
+        config = import_module(conf_path)
+        if hasattr(config, "avail_filters"):
+            avail_filters = config.avail_filters
+        else:
+            sys.stderr.write("LAMBENT CONFIG HAS NO FILTERS, USING DEFAULT\n")
+        if hasattr(config, "avail_progs"):
+            avail_progs = config.avail_progs
+        else:
+            sys.stderr.write("LAMBENT CONFIG HAS NO PROGS, USING DEFAULT\n")
+
+    except ImportError:
+        sys.stderr.write("LAMBENT UNABLE TO LOAD CONFIG FILE, USING DEFAULT\n")
+
+if os.environ.has_key("LAMBENTDEFAULTFILTERS"):
+    default_filters = os.environ.get("LAMBENTDEFAULTFILTERS").split(',')
+else:
+    default_filters = []
+
+if os.environ.has_key("LAMBENTDEFAULTPROGS"):
+    default_prog = os.environ.get("LAMBENTDEFAULTPROGS")
+else:
+    default_prog = None
+    sys.stderr.write("NO DEFAULT")
+
+
+s = LightService(
+    avail_progs=avail_progs,
+    avail_filters=avail_filters,
+    default_filters=default_filters,
+    default_prog=default_prog,
+)
 serviceCollection = service.IServiceCollection(application)
 s.setServiceParent(serviceCollection)
 internet.TCPServer(8660, s.getLightFactory()).setServiceParent(serviceCollection)
