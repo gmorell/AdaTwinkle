@@ -2,8 +2,10 @@
 import collections
 from importlib import import_module
 import json
+import netifaces
 import os
 import serial
+import socket
 import sys
 import uuid
 from twisted.application import internet
@@ -22,6 +24,7 @@ from twisted.web import resource
 from twisted.web import server
 from twisted.web import static
 import txtemplate
+from zeroconf import ServiceInfo, Zeroconf
 
 from simpleprogs import WaitingCounter
 from helpers import DummySerialDevice
@@ -304,7 +307,9 @@ class LightProgramAddFilter(resource.Resource):
         return self.handle_get_post(filt)
 
 class LightService(service.Service):
-    def __init__(self, counter=None, loop=None, device = serial.Serial(LED_PORT, 115200), step_time=0.1, current_value="default",
+    # def __init__(self, counter=None, loop=None, device = serial.Serial(LED_PORT, 115200), step_time=0.1, current_value="default",
+    #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, **kwargs):
+    def __init__(self, counter=None, loop=None, device = DummySerialDevice(), step_time=0.1, current_value="default",
                  avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, **kwargs):
         self.current_value = current_value
         self.step_time = step_time
@@ -354,6 +359,7 @@ class LightService(service.Service):
 
 
         self.update_filters()
+        self.announce()
 
     def getCntr(self):
         return self.counter
@@ -440,6 +446,27 @@ class LightService(service.Service):
 
         return r
 
+    def announce(self):
+        self.zeroconf = Zeroconf()
+
+        self.zconfigs = []
+        for i in netifaces.interfaces():
+            addrs = netifaces.ifaddresses(i)
+            for a in addrs[netifaces.AF_INET]:
+                print socket.inet_aton(a['addr'])
+                info_desc = {'path': '/progs/'}
+                config = ServiceInfo("_http._tcp.local.",
+                               "%s.%s.LambentAether._http._tcp.local." % (socket.gethostname(),i),
+                               socket.inet_aton(a['addr']), 8680, 0, 0,
+                               info_desc, "lambentaether-autodisc-0.local.")
+
+                self.zeroconf.register_service(config)
+                self.zconfigs.append(config)
+
+    def stopService(self):
+        for c in self.zconfigs:
+            self.zeroconf.unregister_service(c)
+        self.zeroconf.close()
 
 if __name__ == "__main__":
     device = DummySerialDevice()
@@ -491,3 +518,4 @@ serviceCollection = service.IServiceCollection(application)
 s.setServiceParent(serviceCollection)
 internet.TCPServer(8660, s.getLightFactory()).setServiceParent(serviceCollection)
 internet.TCPServer(8680, server.Site(s.getLightResource())).setServiceParent(serviceCollection)
+
