@@ -310,7 +310,8 @@ class LightService(service.Service):
     # def __init__(self, counter=None, loop=None, device = serial.Serial(LED_PORT, 115200), step_time=0.1, current_value="default",
     #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, **kwargs):
     def __init__(self, counter=None, loop=None, device = DummySerialDevice(), step_time=0.1, current_value="default",
-                 avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, **kwargs):
+                 avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None,
+                 discovery_name="", **kwargs):
         self.current_value = current_value
         self.step_time = step_time
         self.available_progs = avail_progs
@@ -359,7 +360,7 @@ class LightService(service.Service):
 
 
         self.update_filters()
-        self.announce()
+        self.announce(discovery_name)
 
     def getCntr(self):
         return self.counter
@@ -446,15 +447,17 @@ class LightService(service.Service):
 
         return r
 
-    def announce(self):
+    def announce(self, discovery_name):
         self.zeroconf = Zeroconf()
 
         self.zconfigs = []
         for i in netifaces.interfaces():
+            if i.startswith("lo"):
+                # remove loopback from announce
+                continue
             addrs = netifaces.ifaddresses(i)
             for a in addrs[netifaces.AF_INET]:
-                print socket.inet_aton(a['addr'])
-                info_desc = {'path': '/progs/'}
+                info_desc = {'path': '/progs/', 'name': discovery_name}
                 config = ServiceInfo("_http._tcp.local.",
                                "%s.%s.LambentAether._http._tcp.local." % (socket.gethostname(),i),
                                socket.inet_aton(a['addr']), 8680, 0, 0,
@@ -507,12 +510,19 @@ else:
     default_prog = None
     sys.stderr.write("NO DEFAULT")
 
+if os.environ.has_key("LAMBENTDISCOVERYNAME"):
+    discovery_name = os.environ.get("LAMBENTDISCOVERYNAME")
+else:
+    discovery_name = "LAMBENT"
+    sys.stderr.write("NO NAME SET, USING LAMBENT")
+
 
 s = LightService(
     avail_progs=avail_progs,
     avail_filters=avail_filters,
     default_filters=default_filters,
     default_prog=default_prog,
+    discovery_name=discovery_name
 )
 serviceCollection = service.IServiceCollection(application)
 s.setServiceParent(serviceCollection)
