@@ -307,11 +307,11 @@ class LightProgramAddFilter(resource.Resource):
         return self.handle_get_post(filt)
 
 class LightService(service.Service):
-    # def __init__(self, counter=None, loop=None, device = serial.Serial(LED_PORT, 115200), step_time=0.1, current_value="default",
-    #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
-    def __init__(self, counter=None, loop=None, device = DummySerialDevice(), step_time=0.1, current_value="default",
-                 avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None,
-                 discovery_name="", **kwargs):
+    def __init__(self, counter=None, loop=None, device = serial.Serial(LED_PORT, 115200), step_time=0.1, current_value="default",
+                 avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
+    # def __init__(self, counter=None, loop=None, device = DummySerialDevice(), step_time=0.1, current_value="default",
+    #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None,
+    #              discovery_name="", **kwargs):
         self.current_value = current_value
         self.step_time = step_time
         self.available_progs = avail_progs
@@ -456,6 +456,7 @@ class LightService(service.Service):
                 # remove loopback from announce
                 continue
             addrs = netifaces.ifaddresses(i)
+            print addrs
             for a in addrs[netifaces.AF_INET]:
                 info_desc = {'path': '/progs/', 'name': discovery_name}
                 config = ServiceInfo("_http._tcp.local.",
