@@ -456,6 +456,7 @@ class LightService(service.Service):
                 # remove loopback from announce
                 continue
             addrs = netifaces.ifaddresses(i)
+            print i
             print addrs
             for a in addrs[netifaces.AF_INET]:
                 info_desc = {'path': '/progs/', 'name': discovery_name}
