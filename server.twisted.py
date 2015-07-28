@@ -458,6 +458,7 @@ class LightService(service.Service):
             addrs = netifaces.ifaddresses(i)
             if addrs.keys() == [17]:
                 continue
+            print addrs
             for a in addrs[netifaces.AF_INET]:
                 info_desc = {'path': '/progs/', 'name': discovery_name}
                 config = ServiceInfo("_http._tcp.local.",
