@@ -456,8 +456,8 @@ class LightService(service.Service):
                 # remove loopback from announce
                 continue
             addrs = netifaces.ifaddresses(i)
-            print i
-            print addrs
+            if addrs.keys() == [17]:
+                continue
             for a in addrs[netifaces.AF_INET]:
                 info_desc = {'path': '/progs/', 'name': discovery_name}
                 config = ServiceInfo("_http._tcp.local.",
