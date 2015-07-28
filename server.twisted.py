@@ -308,7 +308,7 @@ class LightProgramAddFilter(resource.Resource):
 
 class LightService(service.Service):
     # def __init__(self, counter=None, loop=None, device = serial.Serial(LED_PORT, 115200), step_time=0.1, current_value="default",
-    #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, **kwargs):
+    #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
     def __init__(self, counter=None, loop=None, device = DummySerialDevice(), step_time=0.1, current_value="default",
                  avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None,
                  discovery_name="", **kwargs):
