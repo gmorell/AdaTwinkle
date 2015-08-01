@@ -10,5 +10,3 @@ Was twinkles for Adalight, well past that
 - ui updates for adding and removing output filters
 
 
-
-
