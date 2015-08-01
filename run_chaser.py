@@ -201,7 +201,7 @@ class EntropicPixel(BaseTwistedStep, AdaProtocolHandler):
     def __init__(self, *args, **kwargs):
         self.saturation = kwargs.pop('saturation', 255)
         self.value = kwargs.pop('value', 255)
-        self.max_cycles = kwargs.pop('value', 7)
+        self.max_cycles = kwargs.pop('value', 21)
 
         kwargs['state_kwargs'] = {
             "saturation": self.saturation,

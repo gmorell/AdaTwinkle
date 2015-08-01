@@ -336,7 +336,7 @@ class ChaoticPixelState(BaseLEDState, HSVHelper):
 
 
 class EntropicPixelState(BaseLEDState, HSVHelper):
-    def __init__(self, hue=0, saturation=0, value=0, step_size=1, id=0, max_cycles=21): #cycleswas12,stepwas3
+    def __init__(self, hue=0, saturation=0, value=0, step_size=1, id=0, max_cycles=36): #cycleswas12,stepwas3
         self.h = hue
         self.s = saturation
         self.v = value
