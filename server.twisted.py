@@ -461,7 +461,7 @@ class LightService(service.Service):
             print addrs
             for a in addrs[netifaces.AF_INET]:
                 info_desc = {'path': '/progs/', 'name': discovery_name}
-                config = ServiceInfo("lambent._http._tcp.local.",
+                config = ServiceInfo("_http._tcp.local.",
                                "%s.%s.LambentAether._http._tcp.local." % (socket.gethostname(),i),
                                socket.inet_aton(a['addr']), 8680, 0, 0,
                                info_desc, "lambentaether-autodisc-0.local.")
