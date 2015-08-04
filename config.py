@@ -127,7 +127,15 @@ avail_progs = {
         "kwargs" : {
             "state_storage": EntropicPixelState
         }
-    }
+    },
+    "seafoam": {
+        "class": BouncyChaser,
+        "kwargs": {
+            "state_storage": DualHueLEDState,
+            "hue1": 90,
+            "hue2": 160,
+        }
+    },
 }
 
 avail_filters = {
