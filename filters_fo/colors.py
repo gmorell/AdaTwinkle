@@ -1,8 +1,52 @@
+from helpers import chunks
 import random
+## Base
+class BaseOutputFilter(object):
+    avail_blending = ['lin_average', 'lin_additive']
+
+    ### setups
+    def split_rgbvals(self, vals):
+        return [i for i in chunks(vals, 3)]
+
+    def convert_overlay_to_RGB(self, overlay_values, overlay_colors):
+        out = []
+        for v in overlay_values:
+            out.append([i*v for i in overlay_colors])
+        return out
+
+    ### blending
+    def blend(self, original, overlay, method):
+        if method not in self.avail_blending:
+            raise SyntaxError("Bad blend method")
+
+        methodstr = "blend_" + method
+        blendr = getattr(self, methodstr)
+        return blendr()
+
+    ## actual blenders
+    # linear
+    def blend_lin_average(self, og, overlay):
+        pixel_out = []
+        for c1,c2 in zip(og, overlay):
+            pixel_out.append(
+                (c1+c2)/2
+            )
+
+        return pixel_out
+
+    def blend_lin_additive(self, og, overlay):
+        pixel_out = []
+        for c1,c2 in zip(og, overlay):
+            pixel_out.append(
+                min(c1 + c2, 255)
+            )
+
+        return pixel_out
+
 ## FX output filters
 
 ### Noise Overlay
-class NoiseOverlayOutputFilter(object):
+class NoiseOverlayOutputFilter(BaseOutputFilter):
     color_overlays = [
         {
             "color": [230, 230, 230],
@@ -15,6 +59,7 @@ class NoiseOverlayOutputFilter(object):
             "pattern_off_max": 2,
             "currently_on": False,
             "move_every": 1,
+            "method": "average",
         },
     ]
 
@@ -78,9 +123,15 @@ class NoiseOverlayOutputFilter(object):
 
     def apply_filter(self, rgbvals): # current a big TODO, actually write this
         split_vals = self.split_rgbvals(rgbvals)
-        for overlay in self.color_overlays:
-            for value, pixel in zip(overlay.values, split_vals):
-                rgbval = self.blend(value, split_vals)
+        for overlay, value_container in zip(self.color_overlays, self.values):
+            new_split = []
+            as_rgb = self.convert_overlay_to_RGB(value_container, overlay['color'])
+            for value, pixel in zip(as_rgb, split_vals):
+                rgbval = self.blend(pixel, value, overlay['method'])
+                new_split.append(rgbval)
+            split_vals = new_split
+
+        return split_vals
 
 
 
