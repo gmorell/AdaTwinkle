@@ -1,8 +1,6 @@
 ---
 - hosts: pis
   vars:
-    http_port: 80
-    max_clients: 200
     lambent_home: /opt/LambentAether
     lambent_user: lambent
 
