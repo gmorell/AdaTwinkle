@@ -1,0 +1,15 @@
+[program:lambent]
+directory= {{ lambent_home }}
+command=twistd -ny server.twisted.py
+user=lambent
+autostart=true
+autorestart=true
+redirect_stderr=True
+environment = {{ lament_env }}
+# this is likely to be installed on a pi, so we dont want to barn through all the available space
+stdout_logfile_maxbytes=1MB
+stdout_logfile_backups=3
+stdout_capture_maxbytes=1MB
+stderr_logfile_maxbytes=1MB
+stderr_logfile_backups=3
+stderr_capture_maxbytes=1MB

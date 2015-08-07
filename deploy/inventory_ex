@@ -1,0 +1,16 @@
+# this is an example lambent ansible inventory
+[lampa]
+192.168.1.10
+
+[lampa:vars]
+lament_env=LAMBENTDEFAULTFILTERS="GRB",LAMBENTDEFAULTPROGS="bouncy",LAMBENTDISCOVERYNAME="Living Lamp A"
+
+[lampb]
+192.168.1.11
+
+[lampb:vars]
+lament_env=LAMBENTDEFAULTPROGS="ocean",LAMBENTDISCOVERYNAME="Living Lamp B"
+
+[pis:children]
+lampa
+lampb
