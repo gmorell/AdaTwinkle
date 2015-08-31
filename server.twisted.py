@@ -424,7 +424,7 @@ class LightService(service.Service):
             place_to_hold_stuff =  [list() for i in xrange(64)]
 
             for j,l in zip(leds_nowflat, leds_l8rflat):
-                blendvals = self.bigblender(j,l)
+                blendvals = self.bigblender(l,j)
                 for v,p in zip(blendvals, place_to_hold_stuff):
                     p.append(v)
             print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';
