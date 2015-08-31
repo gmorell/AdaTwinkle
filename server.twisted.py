@@ -427,8 +427,7 @@ class LightService(service.Service):
                 blendvals = self.bigblender(l,j)
                 for v,p in zip(blendvals, place_to_hold_stuff):
                     p.append(v)
-            print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';
-            print [i[0:3] for i in place_to_hold_stuff]
+
             for l in place_to_hold_stuff:
                 self.device.write(l)
         loop_new = task.LoopingCall(initiated_prog.step)
