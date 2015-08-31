@@ -385,7 +385,7 @@ class LightService(service.Service):
 
     def do_all_filters(self, value):
         for f in self.get_filters():
-            value = f.do_filters(value)
+            value = f.do_filter(value)
 
         return value
 
