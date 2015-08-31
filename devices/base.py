@@ -7,7 +7,7 @@ class BaseDevice(object):
         """
         raise NotImplementedError("This device does not supply a read()")
 
-    def write(self):
+    def write(self, *args, **kwargs):
         """
         Writes to the device
         :return:

@@ -26,6 +26,7 @@ from twisted.web import server
 from twisted.web import static
 import txtemplate
 from zeroconf import ServiceInfo, Zeroconf
+from devices.ada import AdaDevice
 
 from simpleprogs import WaitingCounter
 from helpers import DummySerialDevice
@@ -308,9 +309,9 @@ class LightProgramAddFilter(resource.Resource):
         return self.handle_get_post(filt)
 
 class LightService(service.Service):
-    def __init__(self, counter=None, loop=None, device = serial.Serial(LED_PORT, 115200), step_time=0.1, current_value="default",
+    def __init__(self, counter=None, loop=None, device = AdaDevice(serial=serial.Serial(LED_PORT, 115200)), step_time=0.1, current_value="default",
                  avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
-    # def __init__(self, counter=None, loop=None, device = DummySerialDevice(), step_time=0.1, current_value="default",
+    # def __init__(self, counter=None, loop=None, device = AdaDevice(serial=DummySerialDevice()), step_time=0.1, current_value="default",
     #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None,
     #              discovery_name="", **kwargs):
         self.current_value = current_value
@@ -405,6 +406,7 @@ class LightService(service.Service):
         # # Transitions
         if True and hasattr(self.counter, "leds") and hasattr(initiated_prog, "leds"):
         # if self.transition:
+
             leds_now = [i.read_rgb() for i in self.counter.leds]
             leds_nowflat = list(itertools.chain(*leds_now))
 
@@ -417,8 +419,8 @@ class LightService(service.Service):
                 blendvals = self.bigblender(j,l)
                 for v,p in zip(blendvals, place_to_hold_stuff):
                     p.append(v)
-            # print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';
-            # print [i[0:3] for i in place_to_hold_stuff]
+            print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';
+            print [i[0:3] for i in place_to_hold_stuff]
             for l in place_to_hold_stuff:
                 self.device.write(l)
         loop_new = task.LoopingCall(initiated_prog.step)

@@ -49,7 +49,8 @@ class BaseTwistedStep(object):
     def final_extra_group(self):
         pass
     def step(self):
-        new_buffer = deepcopy(self.buffer_header())
+        # new_buffer = deepcopy(self.buffer_header())
+        new_buffer = []
         for led in self.leds:
             led.do_step()
             self.intermediate_extra_led(led)
