@@ -378,10 +378,16 @@ class LightService(service.Service):
         self.loop.stop()
         self.loop.start(self.step_time)
 
+    # blendy bits
     def bigblender(self, upper, lower, count=64):
         blend = [int(lower + x*(upper-lower)/count) for x in range(count)]
         return blend
 
+    def do_all_filters(self, value):
+        for f in self.get_filters():
+            value = f.do_filters(value)
+
+        return value
 
     def change_program(self, prog, val):
         self.current_value = val
@@ -408,10 +414,12 @@ class LightService(service.Service):
         # if self.transition:
 
             leds_now = [i.read_rgb() for i in self.counter.leds]
-            leds_nowflat = list(itertools.chain(*leds_now))
+            leds_filtered = [self.do_all_filters(i) for i in leds_now]
+            leds_nowflat = list(itertools.chain(*leds_filtered))
 
             leds_l8r = [k.read_rgb() for k in initiated_prog.leds]
-            leds_l8rflat = list(itertools.chain(*leds_l8r))
+            leds_l8r_filt = [self.do_all_filters(i) for i in leds_l8r]
+            leds_l8rflat = list(itertools.chain(*leds_l8r_filt))
 
             place_to_hold_stuff =  [list() for i in xrange(64)]
 
