@@ -1,6 +1,7 @@
 # !/usr/bin/env python
 import collections
 from importlib import import_module
+import itertools
 import json
 import netifaces
 import os
@@ -307,11 +308,11 @@ class LightProgramAddFilter(resource.Resource):
         return self.handle_get_post(filt)
 
 class LightService(service.Service):
-    def __init__(self, counter=None, loop=None, device = serial.Serial(LED_PORT, 115200), step_time=0.1, current_value="default",
-                 avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
-    # def __init__(self, counter=None, loop=None, device = DummySerialDevice(), step_time=0.1, current_value="default",
-    #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None,
-    #              discovery_name="", **kwargs):
+    # def __init__(self, counter=None, loop=None, device = serial.Serial(LED_PORT, 115200), step_time=0.1, current_value="default",
+    #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
+    def __init__(self, counter=None, loop=None, device = DummySerialDevice(), step_time=0.1, current_value="default",
+                 avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None,
+                 discovery_name="", **kwargs):
         self.current_value = current_value
         self.step_time = step_time
         self.available_progs = avail_progs
@@ -376,11 +377,16 @@ class LightService(service.Service):
         self.loop.stop()
         self.loop.start(self.step_time)
 
+    def bigblender(self, upper, lower, count=64):
+        blend = [int(lower + x*(upper-lower)/count) for x in range(count)]
+        return blend
+
+
     def change_program(self, prog, val):
         self.current_value = val
 
         # # stop the existing one
-        if hasattr(self,"loop"):
+        if hasattr(self, "loop"):
             loop_old = self.loop
             loop_old.stop()
 
@@ -395,6 +401,26 @@ class LightService(service.Service):
         # doing it here, prevents that flicker
         initiated_prog.filters = self.get_filters()
 
+        ##
+        # # Transitions
+        if True and hasattr(self.counter, "leds"):
+        # if self.transition:
+            leds_now = [i.read_rgb() for i in self.counter.leds]
+            leds_nowflat = list(itertools.chain(*leds_now))
+
+            leds_l8r = [k.read_rgb() for k in initiated_prog.leds]
+            leds_l8rflat = list(itertools.chain(*leds_l8r))
+
+            place_to_hold_stuff =  [list() for i in xrange(64)]
+
+            for j,l in zip(leds_nowflat, leds_l8rflat):
+                blendvals = self.bigblender(j,l)
+                for v,p in zip(blendvals, place_to_hold_stuff):
+                    p.append(v)
+            # print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';print 'HUE';
+            # print [i[0:3] for i in place_to_hold_stuff]
+            for l in place_to_hold_stuff:
+                self.device.write(l)
         loop_new = task.LoopingCall(initiated_prog.step)
         loop_new.start(self.step_time)
         self.setLoop(loop_new)

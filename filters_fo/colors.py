@@ -43,6 +43,15 @@ class BaseOutputFilter(object):
 
         return pixel_out
 
+    def blend_lin_diff(self, og, overlay):
+        pixel_out = []
+        for c1,c2 in zip(og, overlay):
+            pixel_out.append(
+                abs(c1-c2)
+            )
+
+        return pixel_out
+
 ## FX output filters
 
 ### Noise Overlay
