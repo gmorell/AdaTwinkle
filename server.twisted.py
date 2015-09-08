@@ -309,11 +309,11 @@ class LightProgramAddFilter(resource.Resource):
         return self.handle_get_post(filt)
 
 class LightService(service.Service):
-    def __init__(self, counter=None, loop=None, device = AdaDevice(serial=serial.Serial(LED_PORT, 115200)), step_time=0.1, current_value="default",
-                 avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
-    # def __init__(self, counter=None, loop=None, device = AdaDevice(serial=DummySerialDevice()), step_time=0.1, current_value="default",
-    #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None,
-    #              discovery_name="", **kwargs):
+    # def __init__(self, counter=None, loop=None, device = AdaDevice(serial=serial.Serial(LED_PORT, 115200)), step_time=0.1, current_value="default",
+    #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
+    def __init__(self, counter=None, loop=None, device = AdaDevice(serial=DummySerialDevice()), step_time=0.1, current_value="default",
+                 avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None,
+                 discovery_name="", **kwargs):
         self.current_value = current_value
         self.step_time = step_time
         self.available_progs = avail_progs
@@ -395,7 +395,12 @@ class LightService(service.Service):
         # # stop the existing one
         if hasattr(self, "loop"):
             loop_old = self.loop
-            loop_old.stop()
+            try:
+                loop_old.stop()
+            except AssertionError:
+                pass
+                print "too quick slick"
+
 
         # # setup
         self.program_class = prog['class']
@@ -410,14 +415,15 @@ class LightService(service.Service):
 
         ##
         # # Transitions
-        if True and hasattr(self.counter, "leds") and hasattr(initiated_prog, "leds"):
+        if self.counter and hasattr(self.counter, "leds") and hasattr(initiated_prog, "leds"):
         # if self.transition:
             if self.counter.transitions_list:
-                leds_filtered = self.counter.transitions_list.pop(0)
+                leds_nowflat = self.counter.transitions_list.pop(0)
             else:
                 leds_now = [i.read_rgb() for i in self.counter.leds]
                 leds_filtered = [self.do_all_filters(i) for i in leds_now]
-            leds_nowflat = list(itertools.chain(*leds_filtered))
+                leds_nowflat = list(itertools.chain(*leds_filtered))
+
 
             leds_l8r = [k.read_rgb() for k in initiated_prog.leds]
             leds_l8r_filt = [self.do_all_filters(i) for i in leds_l8r]
