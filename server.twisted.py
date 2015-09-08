@@ -145,6 +145,27 @@ class LightHTMLTree(resource.Resource):
         d.addCallback(cb)
         return server.NOT_DONE_YET
 
+class LightSpeedFaster(resource.Resource):
+    def __init__(self, service):
+        resource.Resource.__init__(self)
+        self.service = service
+
+    def render_GET(self, request):
+        request.setHeader("Content-Type", "application/json; charset=utf-8")
+        speed, changed = self.service.loop_faster()
+        retval = json.dumps({"current": speed, "changed":changed})
+        return retval
+
+class LightSpeedSlower(resource.Resource):
+    def __init__(self, service):
+        resource.Resource.__init__(self)
+        self.service = service
+
+    def render_GET(self, request):
+        request.setHeader("Content-Type", "application/json; charset=utf-8")
+        speed, changed = self.service.loop_slower()
+        retval = json.dumps({"current": speed, "changed":changed})
+        return retval
 
 class LightStatus(resource.Resource):
     def __init__(self, service):
@@ -309,13 +330,14 @@ class LightProgramAddFilter(resource.Resource):
         return self.handle_get_post(filt)
 
 class LightService(service.Service):
-    def __init__(self, counter=None, loop=None, device = AdaDevice(serial=serial.Serial(LED_PORT, 115200)), step_time=0.1, current_value="default",
-                 avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
-    # def __init__(self, counter=None, loop=None, device = AdaDevice(serial=DummySerialDevice()), step_time=0.1, current_value="default",
-    #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None,
-    #              discovery_name="", **kwargs):
+    step_sizes = [0.01, 0.05, 0.1, 0.5, 1, 5, 10]
+    # def __init__(self, counter=None, loop=None, device = AdaDevice(serial=serial.Serial(LED_PORT, 115200)), step_time_index=2, current_value="default",
+    #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
+    def __init__(self, counter=None, loop=None, device = AdaDevice(serial=DummySerialDevice()), step_time_index=2, current_value="default",
+                 avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None,
+                 discovery_name="", **kwargs):
         self.current_value = current_value
-        self.step_time = step_time
+        self.step_time_index = step_time_index
         self.available_progs = avail_progs
 
         if not device:
@@ -363,6 +385,10 @@ class LightService(service.Service):
 
         self.update_filters()
         self.announce(discovery_name)
+
+    @property
+    def step_time(self):
+        return self.step_sizes[self.step_time_index]
 
     def getCntr(self):
         return self.counter
@@ -455,6 +481,28 @@ class LightService(service.Service):
     def update_filters(self):
         self.counter.filters = self.get_filters()
 
+    def loop_set(self):
+        self.loop.stop()
+        self.loop.start(self.step_time)
+
+    def loop_slower(self):
+        max_index = len(self.step_sizes) - 1
+        if self.step_time_index >= max_index:
+            return self.step_time, False
+        else:
+            self.step_time_index += 1
+            self.loop_set()
+            return self.step_time, True
+        # return 0,True
+
+    def loop_faster(self):
+        if self.step_time_index <= 0:
+            return self.step_time, False
+        else:
+            self.step_time_index -= 1
+            self.loop_set()
+            return self.step_time, True
+
     def getLightFactory(self):
         f = protocol.ServerFactory()
         f.protocol = TelnetLightProtocol
@@ -491,6 +539,12 @@ class LightService(service.Service):
 
         filt_add = LightProgramAddFilter(self)
         r.putChild("filt_add", filt_add)
+
+        sp_faster = LightSpeedFaster(self)
+        r.putChild("sp_up", sp_faster)
+
+        sp_slower = LightSpeedSlower(self)
+        r.putChild("sp_dn", sp_slower)
 
         return r
 
