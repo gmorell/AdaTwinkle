@@ -412,9 +412,11 @@ class LightService(service.Service):
         # # Transitions
         if True and hasattr(self.counter, "leds") and hasattr(initiated_prog, "leds"):
         # if self.transition:
-
-            leds_now = [i.read_rgb() for i in self.counter.leds]
-            leds_filtered = [self.do_all_filters(i) for i in leds_now]
+            if self.counter.transitions_list:
+                leds_filtered = self.counter.transitions_list.pop(0)
+            else:
+                leds_now = [i.read_rgb() for i in self.counter.leds]
+                leds_filtered = [self.do_all_filters(i) for i in leds_now]
             leds_nowflat = list(itertools.chain(*leds_filtered))
 
             leds_l8r = [k.read_rgb() for k in initiated_prog.leds]
