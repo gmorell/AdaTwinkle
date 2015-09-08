@@ -379,7 +379,7 @@ class LightService(service.Service):
         self.loop.start(self.step_time)
 
     # blendy bits
-    def bigblender(self, upper, lower, count=64):
+    def bigblender(self, upper, lower, count=128):
         blend = [int(lower + x*(upper-lower)/count) for x in range(count)]
         return blend
 
