@@ -43,24 +43,29 @@ class BaseTwistedStep(object):
     def __init__(self, *args, **kwargs):
         filters = kwargs.pop('filters', collections.OrderedDict())
         self.filters = filters
+        self.transitions_list = []
         super(BaseTwistedStep, self).__init__(*args, **kwargs)
     def intermediate_extra_led(self, led):
         pass
     def final_extra_group(self):
         pass
     def step(self):
-        # new_buffer = deepcopy(self.buffer_header())
-        new_buffer = []
-        for led in self.leds:
-            led.do_step()
-            self.intermediate_extra_led(led)
-            state = led.read_rgb()
-            # apply output filters in the order they're in
+        if self.transitions_list:
+            # oh man since the filters were pre-calculated, no extra work
+            self.device.write(self.transitions_list.pop())
+        else:
+            # new_buffer = deepcopy(self.buffer_header())
+            new_buffer = []
+            for led in self.leds:
+                led.do_step()
+                self.intermediate_extra_led(led)
+                state = led.read_rgb()
+                # apply output filters in the order they're in
 
-            for f in self.filters:
-                state = f.do_filter(state)
-            new_buffer.extend(state)
+                for f in self.filters:
+                    state = f.do_filter(state)
+                new_buffer.extend(state)
 
-        self.final_extra_group()
-        self.device.write(new_buffer)
-        time.sleep(self.fade_time)
+            self.final_extra_group()
+            self.device.write(new_buffer)
+            # time.sleep(self.fade_time)

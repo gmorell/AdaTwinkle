@@ -309,11 +309,11 @@ class LightProgramAddFilter(resource.Resource):
         return self.handle_get_post(filt)
 
 class LightService(service.Service):
-    def __init__(self, counter=None, loop=None, device = AdaDevice(serial=serial.Serial(LED_PORT, 115200)), step_time=0.1, current_value="default",
-                 avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
-    # def __init__(self, counter=None, loop=None, device = AdaDevice(serial=DummySerialDevice()), step_time=0.1, current_value="default",
-    #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None,
-    #              discovery_name="", **kwargs):
+    # def __init__(self, counter=None, loop=None, device = AdaDevice(serial=serial.Serial(LED_PORT, 115200)), step_time=0.1, current_value="default",
+    #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
+    def __init__(self, counter=None, loop=None, device = AdaDevice(serial=DummySerialDevice()), step_time=0.1, current_value="default",
+                 avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None,
+                 discovery_name="", **kwargs):
         self.current_value = current_value
         self.step_time = step_time
         self.available_progs = avail_progs
@@ -428,8 +428,12 @@ class LightService(service.Service):
                 for v,p in zip(blendvals, place_to_hold_stuff):
                     p.append(v)
 
-            for l in place_to_hold_stuff:
-                self.device.write(l)
+            # for l in place_to_hold_stuff:
+            #     self.device.write(l)
+        else:
+            place_to_hold_stuff = []
+
+        initiated_prog.transitions_list = place_to_hold_stuff
         loop_new = task.LoopingCall(initiated_prog.step)
         loop_new.start(self.step_time)
         self.setLoop(loop_new)
