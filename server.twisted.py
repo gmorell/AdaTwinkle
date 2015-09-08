@@ -379,7 +379,7 @@ class LightService(service.Service):
         self.loop.start(self.step_time)
 
     # blendy bits
-    def bigblender(self, upper, lower, count=128):
+    def bigblender(self, upper, lower, count=64):
         blend = [int(lower + x*(upper-lower)/count) for x in range(count)]
         return blend
 
@@ -429,10 +429,10 @@ class LightService(service.Service):
             leds_l8r_filt = [self.do_all_filters(i) for i in leds_l8r]
             leds_l8rflat = list(itertools.chain(*leds_l8r_filt))
 
-            place_to_hold_stuff =  [list() for i in xrange(64)]
+            place_to_hold_stuff =  [list() for i in xrange(128)]
 
             for j,l in zip(leds_nowflat, leds_l8rflat):
-                blendvals = self.bigblender(l,j)
+                blendvals = self.bigblender(l,j,count=128)
                 for v,p in zip(blendvals, place_to_hold_stuff):
                     p.append(v)
 
