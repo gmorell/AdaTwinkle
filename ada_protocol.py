@@ -52,7 +52,7 @@ class BaseTwistedStep(object):
     def step(self):
         if self.transitions_list:
             # oh man since the filters were pre-calculated, no extra work
-            self.device.write(self.transitions_list.pop())
+            self.device.write(self.transitions_list.pop(0))
         else:
             # new_buffer = deepcopy(self.buffer_header())
             new_buffer = []
