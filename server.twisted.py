@@ -27,6 +27,7 @@ from twisted.web import static
 import txtemplate
 from zeroconf import ServiceInfo, Zeroconf
 from devices.ada import AdaDevice
+from devices.esp8266ws2812i2s import ESPDevice
 
 from simpleprogs import WaitingCounter
 from helpers import DummySerialDevice
@@ -331,11 +332,13 @@ class LightProgramAddFilter(resource.Resource):
 
 class LightService(service.Service):
     step_sizes = [0.01, 0.05, 0.1, 0.5, 1, 5, 10]
-    def __init__(self, counter=None, loop=None, device = AdaDevice(serial=serial.Serial(LED_PORT, 115200)), step_time_index=2, current_value="default",
-                 avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
+    # def __init__(self, counter=None, loop=None, device = AdaDevice(serial=serial.Serial(LED_PORT, 115200)), step_time_index=2, current_value="default",
+    #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
     # def __init__(self, counter=None, loop=None, device = AdaDevice(serial=DummySerialDevice()), step_time_index=2, current_value="default",
     #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None,
     #              discovery_name="", **kwargs):
+    def __init__(self, counter=None, loop=None, device = ESPDevice(addr="192.168.13.234"), step_time_index=2, current_value="default",
+                 avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
         self.current_value = current_value
         self.step_time_index = step_time_index
         self.available_progs = avail_progs
