@@ -1,5 +1,5 @@
 ---
-- hosts: pis
+- hosts: tiny
   vars:
     lambent_home: /opt/LambentAether
     lambent_user: lambent
@@ -10,6 +10,7 @@
     apt: pkg={{item}} state=installed update_cache=yes
     with_items:
        - git
+       - python-dev
        - python-setuptools
        - python-pip
        - ntpdate

@@ -233,6 +233,26 @@ class LightProgramList(resource.Resource):
         retval = json.dumps({"available_progs": status})
         return retval
 
+class LightProgramListGrouped(resource.Resource):
+    def __init__(self, service):
+        resource.Resource.__init__(self)
+        self.service = service
+
+    def render_GET(self, request):
+        request.setHeader("Content-Type", "application/json; charset=utf-8")
+        grpd = {}
+        for k,v in self.service.available_progs.iteritems():
+            print k
+            grouping_val = v.get('grouping')
+            if grouping_val and grouping_val in grpd:
+                grpd[grouping_val].append(k)
+            elif grouping_val:
+                grpd[grouping_val] = [k]
+
+        status = sorted(self.service.available_progs.keys())
+        retval = json.dumps({"available_grouped": grpd})
+        return retval
+
 
 class LightProgramEnabledFilterList(resource.Resource):
     def __init__(self, service):
@@ -337,7 +357,7 @@ class LightService(service.Service):
     # def __init__(self, counter=None, loop=None, device = AdaDevice(serial=DummySerialDevice()), step_time_index=2, current_value="default",
     #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None,
     #              discovery_name="", **kwargs):
-    def __init__(self, counter=None, loop=None, device = ESPDevice(addr="192.168.13.234"), step_time_index=2, current_value="default",
+    def __init__(self, counter=None, loop=None, device = ESPDevice(addr="192.168.13.222"), step_time_index=2, current_value="default",
                  avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
         self.current_value = current_value
         self.step_time_index = step_time_index
@@ -527,6 +547,9 @@ class LightService(service.Service):
 
         pl = LightProgramList(self)
         r.putChild("progs", pl)
+
+        plg = LightProgramListGrouped(self)
+        r.putChild("progs_grp", plg)
 
         se = LightProgramSetter(self)
         r.putChild("set", se)

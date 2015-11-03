@@ -18,7 +18,8 @@ avail_progs = {
             "hue": 128,
             "fade_by": 15,
             "spacing": 30,
-        }
+        },
+        "grouping":"cchaser",
     },
     "scc.red": {
         "class": SimpleColorChaser,
@@ -27,7 +28,8 @@ avail_progs = {
             "hue": 0,
             "fade_by": 15,
             "spacing": 30,
-        }
+        },
+        "grouping":"cchaser",
     },
     "sscc": {
         "class": SimpleShiftingColorChaser,
@@ -36,19 +38,22 @@ avail_progs = {
             "hue": 0,
             "fade_by": 15,
             "spacing": 30
-        }
+        },
+        "grouping":"cchaser",
     },
     "rainbow": {
         "class": RainbowChaser,
         "kwargs": {
             "state_storage": RainbowLEDState,
-        }
+        },
+        "grouping":"hchaser",
     },
     "bouncy": {
         "class": BouncyChaser,
         "kwargs": {
             "state_storage": DualHueLEDState
-        }
+        },
+        "grouping":"hchaser",
     },
     "love": {
         "class": BouncyChaser,
@@ -56,7 +61,8 @@ avail_progs = {
             "state_storage": DualHueLEDState,
             "hue1": 230,
             "hue2": 20,
-        }
+        },
+        "grouping":"hchaser",
     },
     "ocean": {
         "class": BouncyChaser,
@@ -64,7 +70,8 @@ avail_progs = {
             "state_storage": DualHueLEDState,
             "hue1": 90,
             "hue2": 160,
-        }
+        },
+        "grouping":"hchaser",
     },
     "forest": {
         "class": BouncyChaser,
@@ -72,7 +79,8 @@ avail_progs = {
             "state_storage": DualHueLEDState,
             "hue1": 60,
             "hue2": 90,
-        }
+        },
+        "grouping":"hchaser",
     },
     "royal": {
         "class": BouncyChaser,
@@ -80,7 +88,8 @@ avail_progs = {
             "state_storage": DualHueLEDState,
             "hue1": 190,
             "hue2": 210,
-        }
+        },
+        "grouping":"hchaser",
     },
     "sunny": {
         "class": BouncyChaser,
@@ -88,7 +97,8 @@ avail_progs = {
             "state_storage": DualHueLEDState,
             "hue1": 34,
             "hue2": 42,
-        }
+        },
+        "grouping":"hchaser",
     },
     "night": {
         "class": BouncyChaser,
@@ -97,7 +107,8 @@ avail_progs = {
             "hue1": 245,
             "hue2": 10,
             "value": 60
-        }
+        },
+        "grouping":"hchaser",
     },
     "mscc": {
         "class": MultiSimpleColorChaser,
@@ -106,7 +117,8 @@ avail_progs = {
             "hues": [0, 128],
             "fade_by": 15,
             "spacing": 30
-        }
+        },
+        "grouping":"cchaser",
     },
     "msnsc": {
         "class": MultiSimpleNoSpaceChaser,
@@ -114,19 +126,22 @@ avail_progs = {
             "state_storage": MultiNoSpaceChaseState,
             "hues": [0, 64, 128, 192],
             "spacing": 15,
-        }
+        },
+        "grouping":"cchaser",
     },
     "chaos": {
         "class": ChaosPixel,
         "kwargs": {
             "state_storage": ChaoticPixelState,
-        }
+        },
+        "grouping":"rando",
     },
     "entropy": {
         "class": EntropicPixel,
         "kwargs" : {
             "state_storage": EntropicPixelState
-        }
+        },
+        "grouping":"rando",
     },
     "seafoam": {
         "class": BouncyChaser,
@@ -134,8 +149,10 @@ avail_progs = {
             "state_storage": DualHueLEDState,
             "hue1": 90,
             "hue2": 160,
-        }
+        },
+        "grouping":"filterpile",
     },
+
 }
 
 avail_filters = {
