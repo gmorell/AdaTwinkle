@@ -39,6 +39,25 @@ class NightShift(BaseTwistedStep, AdaProtocolHandler):
         # do more things with the time here
         # figure out the offsets from twilight/sunset/etc
 
+        # all the values below will be multiplied by the selected global brightness
+        # so it can be "off" when not in use
+
+        # hour before twilisht come from $minimum be it off or just barely lit.
+        # $min -> amber %40
+        # at twilight should be amber %40
+        # at sunrise should be amber %80
+        # 1/2 hour after sunrise warmw %40 amber %60
+        # full hour after sunrise warmw %100 amber %0
+        # 4 hours after sunrise warmww %100 coolw %100
+        # 4 hours before sunset warmww %100 coolw %100
+        # 2 hours before sunset warmw %100 coolw %50
+        # full hour before sunset warmw %100 coolw %0
+        # at sunset should be warmw %80 amber %10
+        # at twilight should be warmw %60 amber %15
+        # four hours after twilight warmw %50 amber %30
+        # six hours after twilight warmw %9 amber %30
+        # seven hours after twilight warmw %0 amber %0 ($min)
+
 
 
     def init_leds(self):
