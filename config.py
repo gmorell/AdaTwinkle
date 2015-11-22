@@ -5,11 +5,22 @@ from led_states import ChaserLEDState, RainbowLEDState, DualHueLEDState, MultiCh
 from run_chaser import SimpleColorChaser, SimpleShiftingColorChaser, ChaosPixel, EntropicPixel
 from run_chaser import RainbowChaser, BouncyChaser
 from run_chaser import MultiSimpleColorChaser, MultiSimpleNoSpaceChaser
+from standby import StandbyRunner, StandbyFadeRunner
 
 avail_progs = {
     "default": {
         "class": WaitingCounter,
         "kwargs": {}
+    },
+    "standby": {
+        "class": StandbyRunner,
+        "kwargs": {},
+        "grouping": "waiting"
+    },
+    "standbyfade": {
+        "class": StandbyFadeRunner,
+        "kwargs": {},
+        "grouping": "waiting"
     },
     "scc.blue": {
         "class": SimpleColorChaser,

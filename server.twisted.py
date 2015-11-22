@@ -357,7 +357,7 @@ class LightService(service.Service):
     # def __init__(self, counter=None, loop=None, device = AdaDevice(serial=DummySerialDevice()), step_time_index=2, current_value="default",
     #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None,
     #              discovery_name="", **kwargs):
-    def __init__(self, counter=None, loop=None, device = ESPDevice(addr="192.168.13.222"), step_time_index=2, current_value="default",
+    def __init__(self, counter=None, loop=None, device = ESPDevice(addrs=["192.168.13.217","192.168.13.218"]), step_time_index=2, current_value="default",
                  avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
         self.current_value = current_value
         self.step_time_index = step_time_index

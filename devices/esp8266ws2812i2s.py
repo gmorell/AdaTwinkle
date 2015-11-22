@@ -8,8 +8,8 @@ import itertools
 
 
 class ESPDevice(BaseDevice):
-    def __init__(self, addr, port=7777):
-        self.addr = addr
+    def __init__(self, addrs=[], port=7777):
+        self.addr = addrs
         self.port = port
         self.socket = socket.socket(socket.AF_INET,  socket.SOCK_DGRAM) # UDP
 
@@ -22,4 +22,5 @@ class ESPDevice(BaseDevice):
         values = list(itertools.chain.from_iterable(filtered))
 
         structd = struct.pack('B'*len(values), *values)
-        self.socket.sendto(structd, (self.addr, self.port))
+        for a in self.addr:
+            self.socket.sendto(structd, (a, self.port))
