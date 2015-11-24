@@ -1,4 +1,6 @@
 from filters.colors import RGBtoGRBLambentOutputFilter, InvertLambentOutputFilter
+from growth_mortality.states import BaseGMStateHSV
+from growth_mortality.steps import GrowthAndMortality, GAMLeaves
 from simpleprogs import WaitingCounter, DoubleWaitingCounter
 from led_states import ChaserLEDState, RainbowLEDState, DualHueLEDState, MultiChaserLEDState, MultiNoSpaceChaseState, \
     HSVAwareLEDStepState, ChaoticPixelState, EntropicPixelState
@@ -162,6 +164,13 @@ avail_progs = {
             "hue2": 160,
         },
         "grouping":"filterpile",
+    },
+    "leaves": {
+        "class": GAMLeaves,
+        "kwargs": {
+            "state_storage": BaseGMStateHSV,
+        },
+        "grouping":"growth_mortality",
     },
 
 }
