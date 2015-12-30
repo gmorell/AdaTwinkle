@@ -7,6 +7,76 @@ def pattern_list_fill(pattern, count):
             yield i
             index +=1
 
+def convert_hsv_rgb_int(h,s,v):
+    if s == 0:
+        r = g = b = v;
+        return r,g,b
+
+    region = h/43;
+    fpart = (h - (region * 43)) * 6
+
+    p = (v * (255-s)) >> 8
+    q = (v * (255 - ((s * fpart) >> 8))) >> 8
+    t = (v * (255 - ((s * (255 - fpart)) >> 8))) >> 8
+
+    if region == 0:
+        r = v
+        g = t
+        b = p
+    elif region == 1:
+        r = q
+        g = v
+        b = p
+    elif region == 2:
+        r = p
+        g = v
+        b = t
+    elif region == 3:
+        r = p
+        g = q
+        b = v
+    elif region == 4:
+        r = t
+        g = p
+        b = v
+    else:
+        r = v
+        g = p
+        b = q
+
+    return r,g,b
+
+
+def convert_rgb_hsv_int(r, g, b):
+    min_v = min(r, g, b)
+    max_v = max(r, g, b)
+
+    mm_delta = max_v - min_v
+
+    v = max_v
+    if v == 0:
+        h = 0
+        s = 0
+        return h, s, v
+
+    s = 255 * mm_delta / v
+    if s == 0:
+        h = 0
+        return h, s, v
+
+    if max_v == r:
+        h = 43 * (g - b) / mm_delta;
+
+    elif max_v == g:
+        h = 85 + 43 * (b - r) / mm_delta;
+
+    elif max_v == b:
+        h = 171 + 43 * (r - g) / mm_delta;
+
+    return h, s, v
+
+
+
 class HSVHelper(object):
     def __init__(self,h,s,v):
         self.h = h

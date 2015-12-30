@@ -1,6 +1,7 @@
 from filters.colors import RGBtoGRBLambentOutputFilter, InvertLambentOutputFilter
 from growth_mortality.states import BaseGMStateHSV
 from growth_mortality.steps import GrowthAndMortality, GAMLeaves
+from lambents.test_patterns import TestRunner
 from simpleprogs import WaitingCounter, DoubleWaitingCounter
 from led_states import ChaserLEDState, RainbowLEDState, DualHueLEDState, MultiChaserLEDState, MultiNoSpaceChaseState, \
     HSVAwareLEDStepState, ChaoticPixelState, EntropicPixelState
@@ -172,6 +173,10 @@ avail_progs = {
         },
         "grouping":"growth_mortality",
     },
+    "test.sweep": {
+        "class":TestRunner,
+        "grouping": "test"
+    }
 
 }
 

@@ -9,8 +9,8 @@ class BaseGMStateHSV(BaseLEDState, HSVHelper):
     def __init__(self, 
                  growth_hues=[], death_hues=[], 
                  linger_min_g=10, linger_max_g=50,
-                 linger_min_d=10, linger_max_d=25,
-                 linger_between_min=30, linger_between_max=140,
+                 linger_min_d=5, linger_max_d=25,
+                 linger_between_min=30, linger_between_max=130,
                  h=0, s=0, v=0, **kwargs
                  ):
         self.grown = False
@@ -25,11 +25,15 @@ class BaseGMStateHSV(BaseLEDState, HSVHelper):
         self.linger_between_min = linger_between_min
         self.linger_between_max = linger_between_max
 
+        self.h = 0
+        self.s = 0
+        self.v = 0
+
         self.instantiate_lists()
+
 
     def _expansion_func(self, iterable):
         grown = []
-        # print iterable
         for g,d in iterable:
             x = [g] * d
             grown.extend(x)
@@ -103,7 +107,3 @@ class BaseGMStateHSV(BaseLEDState, HSVHelper):
             self.h, self.s, self.v = self.final_output_hsvs.pop(0)
         else:
             self.instantiate_lists()
-
-    def read_rgb(self):
-        r, g, b = self._hsv_to_rgb(self.h, self.s, self.v)
-        return [int(r), int(g), int(b)]
