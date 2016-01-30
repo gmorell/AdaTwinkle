@@ -8,6 +8,8 @@ from led_states import ChaserLEDState, RainbowLEDState, DualHueLEDState, MultiCh
 from run_chaser import SimpleColorChaser, SimpleShiftingColorChaser, ChaosPixel, EntropicPixel
 from run_chaser import RainbowChaser, BouncyChaser
 from run_chaser import MultiSimpleColorChaser, MultiSimpleNoSpaceChaser
+from solids.states import SolidRGBState
+from solids.steps import SolidRGB
 from standby import StandbyRunner, StandbyFadeRunner
 
 avail_progs = {
@@ -176,8 +178,57 @@ avail_progs = {
     "test.sweep": {
         "class":TestRunner,
         "grouping": "test"
+    },
+    "solid.ww":{
+        "class": SolidRGB,
+        "kwargs": {
+            "state_storage": SolidRGBState,
+            "r": 255,
+            "g": 255,
+            "b": 190,
+        },
+        "grouping": "solid"
+    },
+    "solid.h4x":{
+        "class": SolidRGB,
+        "kwargs": {
+            "state_storage": SolidRGBState,
+            "r": 0,
+            "g": 102,
+            "b": 202,
+        },
+        "grouping": "solid"
+    },
+    "solid.ruby":{
+        "class": SolidRGB,
+        "kwargs": {
+            "state_storage": SolidRGBState,
+            "r": 155,
+            "g": 17,
+            "b": 30,
+        },
+        "grouping": "solid"
+    },
+    "solid.emerald":{
+        "class": SolidRGB,
+        "kwargs": {
+            "state_storage": SolidRGBState,
+            "r": 4,
+            "g": 93,
+            "b": 28,
+        },
+        "grouping": "solid"
+    },
+    "solid.gold":{
+        "class": SolidRGB,
+        "kwargs": {
+            "state_storage": SolidRGBState,
+            "r": 255,
+            "g": 215,
+            "b": 0,
+        },
+        "grouping": "solid"
     }
-
 }
 
 avail_filters = {
