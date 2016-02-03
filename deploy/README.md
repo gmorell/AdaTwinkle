@@ -8,3 +8,8 @@ In here are some ansible bits and pieces to provision a raspi with the correct b
 ansible-playbook provision.pi.yml -i inventory
 ```
 
+## Supported LAMBENTCONNECT variables
+
+- `"espudp://192.168.1.1:192.168.1.2"`
+- `"adlserial:///dev/ttyACM0"`
+- `"debug://"`

@@ -1,5 +1,6 @@
 # !/usr/bin/env python
 import collections
+import urlparse
 from importlib import import_module
 import itertools
 import json
@@ -352,15 +353,9 @@ class LightProgramAddFilter(resource.Resource):
 
 class LightService(service.Service):
     step_sizes = [0.01, 0.05, 0.1, 0.5, 1, 5, 10]
-    # def __init__(self, counter=None, loop=None, device = AdaDevice(serial=serial.Serial(LED_PORT, 115200)), step_time_index=2, current_value="default",
-    #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
-    # def __init__(self, counter=None, loop=None, device = AdaDevice(serial=DummySerialDevice()), step_time_index=2, current_value="default",
-    #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None,
-    #              discovery_name="", **kwargs):
-    # def __init__(self, counter=None, loop=None, device = ESPDevice(addrs=["192.168.13.121"]), step_time_index=2, current_value="default",
-    #              avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
-    def __init__(self, counter=None, loop=None, device = ESPDevice(addrs=["192.168.13.218","192.168.13.217"]), step_time_index=2, current_value="default",
-                 avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, discovery_name="", **kwargs):
+    def __init__(self, counter=None, loop=None, device = AdaDevice(serial=DummySerialDevice()), step_time_index=2, current_value="default",
+                 avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, lambent_port=8680,
+                 discovery_name="", **kwargs):
         self.current_value = current_value
         self.step_time_index = step_time_index
         self.available_progs = avail_progs
@@ -409,7 +404,7 @@ class LightService(service.Service):
 
 
         self.update_filters()
-        self.announce(discovery_name)
+        self.announce(discovery_name, port=lambent_port)
 
     @property
     def step_time(self):
@@ -576,7 +571,7 @@ class LightService(service.Service):
 
         return r
 
-    def announce(self, discovery_name):
+    def announce(self, discovery_name, port=8680):
         self.zeroconf = Zeroconf()
 
         self.zconfigs = []
@@ -584,15 +579,20 @@ class LightService(service.Service):
             if i.startswith("lo"):
                 # remove loopback from announce
                 continue
+            if i.startswith("veth"):
+                # remove docker interface from announce
+                continue
+
             addrs = netifaces.ifaddresses(i)
             if addrs.keys() == [17]:
                 continue
             print addrs
             for a in addrs[netifaces.AF_INET]:
+                print a
                 info_desc = {'path': '/progs/', 'name': discovery_name}
                 config = ServiceInfo("_http._tcp.local.",
                                "%s.%s.LambentAether._http._tcp.local." % (socket.gethostname(),i),
-                               socket.inet_aton(a['addr']), 8680, 0, 0,
+                               socket.inet_aton(a['addr']), port, 0, 0,
                                info_desc, "lambentaether-autodisc-0.local.")
 
                 self.zeroconf.register_service(config)
@@ -648,16 +648,45 @@ else:
     discovery_name = "LAMBENT"
     sys.stderr.write("NO NAME SET, USING LAMBENT")
 
+lambent_port = int(os.environ.get("LAMBENTPORT", 8680))
+
+if lambent_port == 8680:
+    sys.stderr.write("USING DEFAULT PORT")
+
+# figure out the connection string
+lambent_connect = os.environ.get("LAMBENTCONNECT", "adlserial:///dev/ttyACM0")
+print lambent_connect, lambent_port
+print type(lambent_port)
+
+# "espudp://192.168.1.1:192.168.1.2"
+# "adlserial:///dev/ttyACM0"
+# "debug://"
+parsed = urlparse.urlparse(lambent_connect)
+if parsed.scheme == "espudp":
+    device_class = ESPDevice
+    device_kwargs = {"addrs": parsed.netloc.split(':')}
+
+elif parsed.scheme == "adlserial":
+    device_class = AdaDevice
+    device_kwargs = {"serial": serial.Serial(parsed.path, 115200)}
+
+elif parsed.scheme == "debug":
+    device_class = AdaDevice
+    device_kwargs = {"serial": DummySerialDevice()}
+
+device = device_class(**device_kwargs)
 
 s = LightService(
     avail_progs=avail_progs,
     avail_filters=avail_filters,
     default_filters=default_filters,
     default_prog=default_prog,
-    discovery_name=discovery_name
+    discovery_name=discovery_name,
+    device=device,
+    lambent_port=lambent_port
 )
 serviceCollection = service.IServiceCollection(application)
 s.setServiceParent(serviceCollection)
-internet.TCPServer(8660, s.getLightFactory()).setServiceParent(serviceCollection)
-internet.TCPServer(8680, server.Site(s.getLightResource())).setServiceParent(serviceCollection)
+# internet.TCPServer(8660, s.getLightFactory()).setServiceParent(serviceCollection)
+internet.TCPServer(lambent_port, server.Site(s.getLightResource())).setServiceParent(serviceCollection)
 
