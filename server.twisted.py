@@ -266,6 +266,20 @@ class LightProgramEnabledFilterList(resource.Resource):
         retval = json.dumps({"enabled_filters": status})
         return retval
 
+
+class LightProgramFilterList(resource.Resource):
+    def __init__(self, service):
+        resource.Resource.__init__(self)
+        self.service = service
+
+    def render_GET(self, request):
+        request.setHeader("Content-Type", "application/json; charset=utf-8")
+        print self.service.service_avail_filters
+        status = collections.OrderedDict([[k,v._desc] for k,v in self.service.service_avail_filters.iteritems()])
+        retval = json.dumps({"available_filters": status})
+        return retval
+
+
 class LightProgramRMFilter(resource.Resource):
     def __init__(self, service):
         resource.Resource.__init__(self)
@@ -556,6 +570,9 @@ class LightService(service.Service):
 
         filt_enabled = LightProgramEnabledFilterList(self)
         r.putChild("filt_en", filt_enabled)
+
+        filt_list = LightProgramFilterList(self)
+        r.putChild("filt_ls", filt_list)
 
         filt_delete = LightProgramRMFilter(self)
         r.putChild("filt_rm", filt_delete)

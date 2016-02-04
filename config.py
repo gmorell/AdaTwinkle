@@ -1,4 +1,6 @@
-from filters.colors import RGBtoGRBLambentOutputFilter, InvertLambentOutputFilter
+from filters.colors import RGBtoGRBLambentOutputFilter, InvertLambentOutputFilter, PercentageBrightnessReduc50, \
+    PercentageBrightnessReduc66, PercentageBrightnessReduc75, PercentageBrightnessReduc80, PercentageBrightnessReduc90, \
+    NeonOutputFilter, PastelOutputFilter, DarkenedOutputFilter
 from growth_mortality.states import BaseGMStateHSV
 from growth_mortality.steps import GrowthAndMortality, GAMLeaves
 from lambents.test_patterns import TestRunner
@@ -234,4 +236,15 @@ avail_progs = {
 avail_filters = {
     "GRB": RGBtoGRBLambentOutputFilter,
     "INV": InvertLambentOutputFilter,
+
+    # Reductions
+    "R50": PercentageBrightnessReduc50,
+    "R66": PercentageBrightnessReduc66,
+    "R75": PercentageBrightnessReduc75,
+    "R80": PercentageBrightnessReduc80,
+    "R90": PercentageBrightnessReduc90,
+    # output
+    "ONE": NeonOutputFilter,
+    "OPA": PastelOutputFilter,
+    "ODO": DarkenedOutputFilter,
 }
