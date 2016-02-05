@@ -628,7 +628,6 @@ class LightService(service.Service):
         sp_slower = LightSpeedSlower(self)
         r.putChild("sp_dn", sp_slower)
 
-        # todo replace these w/ the correct funcs
         sp_list = LightSpeedOptions(self)
         r.putChild("sp_ls", sp_list)
 
