@@ -1,0 +1,57 @@
+---
+key:
+##R return values
+##E examples
+##M mappings
+
+## /status <- returns current running
+##R {"running": "solid.ruby"}
+
+## /progs <- raw program list
+##R {"available_progs": ["bouncy", "chaos",...]}
+##M {"available_progs": ["<progID>", "<progID>",...]}
+
+## /progs_grp <- grouped program list
+##R {"available_grouped": {"rando": ["entropy", "chaos"], "growth_mortality": ["leaves"]}}
+##M {"available_grouped": {"<grpID>": ["<progID>", "<progID>"]}}
+
+## /set?prog=<progID> <- set the program
+##E /set?prog=bouncy
+##R {"status": "SUCCESS_CHANGED_PROGRAM", "value": "bouncy"}
+##R {"status": "ERROR_NON_EXISTENT_PROGRAM_PARAMETER", "value": "bouncers"}
+
+## /filt_en <- enabled filter list
+##R {"enabled_filters": {"A534": "R90"}}
+##M {"enabled_filters": {"<filtInstID>": "<filtID>"}}
+
+## /filt_ls <- all filter list
+##R {"available_filters": {"OPA": "Pastel-ify", "GRB": "RGB -> GRB",
+##M {"available_filters": {"<filtID>": "<filtDESC>",}}
+
+## /filt_rm?filt=<filtInstID> <- delete a filter
+##E /filt_rm?filt=A534
+##R {"status": "SUCCESS_REMOVED_FILTER", "value": "A534"}
+##R {"status": "ERROR_NON_EXISTENT_ENABLED_FILTER_KEY", "value": "A534"}
+
+## /filt_add?filt=<filtID> <- add a filter
+##E /filt_add?filt=OPA
+##R {"status": "SUCCESS_ADDED_FILTER", "value": "R90"}
+##R {"status": "ERROR_NON_EXISTENT_FILTER_KEY", "value": "R91"}
+
+## /sp_up <- faster
+##R {"current": 0.05, "changed": true}
+##R {"current": 0.01, "changed": false}
+
+## /sp_dn <- slower
+##R {"current": 10, "changed": true}
+##R {"current": 10, "changed": false}
+
+## /sp_ls <- speed list
+##R {"avail": [0.01, 0.05, 0.1, 0.5, 1, 5, 10], "current": 0.01}
+##M {"avail": [<spID>,<spID>,<spID>,<spID>,<spID>], "current": <spID>}
+
+## /sp_set?val=<spID>, <- manually set
+##E /sp_set?val=0.01
+##R {"status": "SPEED_UPDATED", "value": "<spID>"}
+##M {"status": "SPEED_UPDATED", "value": "0.01"}
+##R {"status": "ERROR_INVALID_SPEED_VALUE", "value": "0.03"}

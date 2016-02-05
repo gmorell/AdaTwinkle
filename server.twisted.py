@@ -169,6 +169,44 @@ class LightSpeedSlower(resource.Resource):
         retval = json.dumps({"current": speed, "changed":changed})
         return retval
 
+class LightSpeedOptions(resource.Resource):
+    def __init__(self, service):
+        resource.Resource.__init__(self)
+        self.service = service
+
+    def render_GET(self, request):
+        request.setHeader("Content-Type", "application/json; charset=utf-8")
+        speeds = self.service.step_sizes
+        current = self.service.step_time
+        retval = json.dumps({"avail": speeds, "current":current})
+        return retval
+
+class LightSpeedSet(resource.Resource):
+    def __init__(self, service):
+        resource.Resource.__init__(self)
+        self.service = service
+
+    def render_GET(self, request):
+        request.setHeader("Content-Type", "application/json; charset=utf-8")
+        val = request.args.get('val', [0.5])[0]
+        floaty = float(val)
+        if floaty in self.service.step_sizes:
+            index = self.service.step_sizes.index(floaty)
+            self.service.set_time_index(index)
+            return json.dumps(
+                {
+                    "status": "SPEED_UPDATED",
+                    "value": val
+                }
+            )
+        else:
+            return json.dumps(
+                {
+                    "status": "ERROR_INVALID_SPEED_VALUE",
+                    "value": val
+                }
+            )
+
 class LightStatus(resource.Resource):
     def __init__(self, service):
         resource.Resource.__init__(self)
@@ -537,6 +575,10 @@ class LightService(service.Service):
             self.loop_set()
             return self.step_time, True
 
+    def set_time_index(self, value):
+        self.step_time_index = value
+        self.loop_set()
+
     def getLightFactory(self):
         f = protocol.ServerFactory()
         f.protocol = TelnetLightProtocol
@@ -585,6 +627,13 @@ class LightService(service.Service):
 
         sp_slower = LightSpeedSlower(self)
         r.putChild("sp_dn", sp_slower)
+
+        # todo replace these w/ the correct funcs
+        sp_list = LightSpeedOptions(self)
+        r.putChild("sp_ls", sp_list)
+
+        sp_set = LightSpeedSet(self)
+        r.putChild("sp_set", sp_set)
 
         return r
 
