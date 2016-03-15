@@ -32,7 +32,7 @@
     pip: requirements={{ lambent_home }}/requirements.txt
 
   - name: write lambent supervisor config
-    template: src=lambent_supervisor_tmpl.jinja2 dest=/etc/supervisor/conf.d/lambent.conf mode=0644
+    template: src=lambent_supervisor_tmpl.jinja2 dest=/etc/supervisor/conf.d/lambent_{{ custom_pid_conf|default("") }}.conf mode=0644
 
   - name: restart supervisor
     service: name=supervisor state=restarted
