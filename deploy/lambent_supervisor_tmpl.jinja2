@@ -1,4 +1,4 @@
-[program:lambent]
+[program:lambent_{{ custom_pid_conf|default("") }}]
 directory= {{ lambent_home }}
 command=twistd -ny server.twisted.py --pidfile /opt/LambentAether/twistd_{{ custom_pid_conf|default("") }}.pid2
 user=lambent

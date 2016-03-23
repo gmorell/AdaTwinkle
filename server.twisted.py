@@ -656,7 +656,7 @@ class LightService(service.Service):
                 print a
                 info_desc = {'path': '/progs/', 'name': discovery_name}
                 config = ServiceInfo("_http._tcp.local.",
-                               "%s.%s.LambentAether._http._tcp.local." % (socket.gethostname(),i),
+                               "%s.%s.%s.LambentAether._http._tcp.local." % (socket.gethostname(),i, port),
                                socket.inet_aton(a['addr']), port, 0, 0,
                                info_desc, "lambentaether-autodisc-0.local.")
 
