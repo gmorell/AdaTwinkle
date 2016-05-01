@@ -230,6 +230,16 @@ avail_progs = {
             "b": 0,
         },
         "grouping": "solid"
+    },
+    "solid.coffee":{
+        "class": SolidRGB,
+        "kwargs": {
+            "state_storage": SolidRGBState,
+            "r": 178,
+            "g": 143,
+            "b": 79,
+        },
+        "grouping": "solid"
     }
 }
 

@@ -9,6 +9,12 @@ import pytz
 # and that you're not hitting the internet through a proxy or something
 class NightShift(BaseTwistedStep, AdaProtocolHandler):
     def __init__(self, *args, **kwargs):
+        # # adjustable arguments
+
+        # how soon before morning twilight we start going amber
+        self.pre_twilight_r = kwargs.pop("pre_twlilight_r", 60)
+        # how soon after evening twilight do we start going amber
+        self.post_twilight_s = kwargs.pop("post_twlilight_s", 360)
         super(NightShift, self).__init__(*args, **kwargs)
 
         self.get_location_info()
@@ -37,7 +43,7 @@ class NightShift(BaseTwistedStep, AdaProtocolHandler):
         twilight_s = observer.next_setting(ephem.Sun(), use_center=True)
 
         # do more things with the time here
-        # figure out the offsets from twilight/sunset/etc
+        # offsets from twilight/sunset/etc configurable via kwargs
 
         # all the values below will be multiplied by the selected global brightness
         # so it can be "off" when not in use
