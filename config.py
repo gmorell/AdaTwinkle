@@ -235,9 +235,9 @@ avail_progs = {
         "class": SolidRGB,
         "kwargs": {
             "state_storage": SolidRGBState,
-            "r": 178,
-            "g": 143,
-            "b": 79,
+            "r": 117,
+            "g": 86,
+            "b": 56,
         },
         "grouping": "solid"
     }
