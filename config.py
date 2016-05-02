@@ -17,17 +17,20 @@ from standby import StandbyRunner, StandbyFadeRunner
 avail_progs = {
     "default": {
         "class": WaitingCounter,
-        "kwargs": {}
+        "kwargs": {},
+        "display": "Default",
     },
     "standby": {
         "class": StandbyRunner,
         "kwargs": {},
-        "grouping": "waiting"
+        "grouping": "waiting",
+        "display": "Standby",
     },
     "standbyfade": {
         "class": StandbyFadeRunner,
         "kwargs": {},
-        "grouping": "waiting"
+        "grouping": "waiting",
+        "display": "Standby w/ Fade",
     },
     "scc.blue": {
         "class": SimpleColorChaser,
@@ -38,6 +41,7 @@ avail_progs = {
             "spacing": 30,
         },
         "grouping":"cchaser",
+        "display": "SimpleColorChaser - Blue",
     },
     "scc.red": {
         "class": SimpleColorChaser,
@@ -48,6 +52,7 @@ avail_progs = {
             "spacing": 30,
         },
         "grouping":"cchaser",
+        "display": "SimpleColorChaser - Red",
     },
     "sscc": {
         "class": SimpleShiftingColorChaser,
@@ -58,6 +63,7 @@ avail_progs = {
             "spacing": 30
         },
         "grouping":"cchaser",
+        "display": "SimpleShiftingColorChaser",
     },
     "rainbow": {
         "class": RainbowChaser,
@@ -65,6 +71,7 @@ avail_progs = {
             "state_storage": RainbowLEDState,
         },
         "grouping":"hchaser",
+        "display": "Chaser - Rainbow",
     },
     "bouncy": {
         "class": BouncyChaser,
@@ -72,6 +79,7 @@ avail_progs = {
             "state_storage": DualHueLEDState
         },
         "grouping":"hchaser",
+        "display": "Chaser - Vista",
     },
     "love": {
         "class": BouncyChaser,
@@ -81,6 +89,7 @@ avail_progs = {
             "hue2": 20,
         },
         "grouping":"hchaser",
+        "display": "Chaser - Love",
     },
     "ocean": {
         "class": BouncyChaser,
@@ -90,6 +99,7 @@ avail_progs = {
             "hue2": 160,
         },
         "grouping":"hchaser",
+        "display": "Chaser - Ocean",
     },
     "forest": {
         "class": BouncyChaser,
@@ -99,6 +109,7 @@ avail_progs = {
             "hue2": 90,
         },
         "grouping":"hchaser",
+        "display": "Chaser - Forest",
     },
     "royal": {
         "class": BouncyChaser,
@@ -108,6 +119,7 @@ avail_progs = {
             "hue2": 210,
         },
         "grouping":"hchaser",
+        "display": "Chaser - Royal",
     },
     "sunny": {
         "class": BouncyChaser,
@@ -117,6 +129,7 @@ avail_progs = {
             "hue2": 42,
         },
         "grouping":"hchaser",
+        "display": "Chaser - Sunny",
     },
     "night": {
         "class": BouncyChaser,
@@ -127,6 +140,7 @@ avail_progs = {
             "value": 60
         },
         "grouping":"hchaser",
+        "display": "Chaser - Night",
     },
     "mscc": {
         "class": MultiSimpleColorChaser,
@@ -137,6 +151,7 @@ avail_progs = {
             "spacing": 30
         },
         "grouping":"cchaser",
+        "display": "Multi-Chaser - Red/Blue",
     },
     "msnsc": {
         "class": MultiSimpleNoSpaceChaser,
@@ -146,6 +161,7 @@ avail_progs = {
             "spacing": 15,
         },
         "grouping":"cchaser",
+        "display": "Multi-Chaser - 0/64/128/192",
     },
     "chaos": {
         "class": ChaosPixel,
@@ -153,6 +169,7 @@ avail_progs = {
             "state_storage": ChaoticPixelState,
         },
         "grouping":"rando",
+        "display": "Chaos",
     },
     "entropy": {
         "class": EntropicPixel,
@@ -160,6 +177,7 @@ avail_progs = {
             "state_storage": EntropicPixelState
         },
         "grouping":"rando",
+        "display": "Entropy",
     },
     "seafoam": {
         "class": BouncyChaser,
@@ -169,18 +187,23 @@ avail_progs = {
             "hue2": 160,
         },
         "grouping":"filterpile",
+        "display": "Seafoam - TEST",
     },
     "leaves": {
         "class": GAMLeaves,
         "kwargs": {
             "state_storage": BaseGMStateHSV,
+            "growth_hues": [90, 98, 94, 95, 90],
+            "death_hues": [90, 95, 85, 90, 80, 85, 75, 80, 70, 75, 65, 70, 60, 65, 55, 60, 50, 55, 45, 50, 40, 45, 35, 40, 30, 35, 25, 30, 20, 25, 15, 20, 10, 15, 5, 10, 0]
         },
         "grouping":"growth_mortality",
+        "display": "Leaves - TEST",
     },
-    "test.sweep": {
-        "class":TestRunner,
-        "grouping": "test"
-    },
+    # "test.sweep": {
+    #     "class":TestRunner,
+    #     "grouping": "test",
+    #     "display": "TEST - SWEEP",
+    # },
     "solid.ww":{
         "class": SolidRGB,
         "kwargs": {
@@ -189,7 +212,8 @@ avail_progs = {
             "g": 255,
             "b": 190,
         },
-        "grouping": "solid"
+        "grouping": "solid",
+        "display": "Solid - Warm White",
     },
     "solid.h4x":{
         "class": SolidRGB,
@@ -199,7 +223,8 @@ avail_progs = {
             "g": 102,
             "b": 202,
         },
-        "grouping": "solid"
+        "grouping": "solid",
+        "display": "Solid - h4xmb blue",
     },
     "solid.ruby":{
         "class": SolidRGB,
@@ -209,7 +234,8 @@ avail_progs = {
             "g": 17,
             "b": 30,
         },
-        "grouping": "solid"
+        "grouping": "solid",
+        "display": "Solid - Ruby",
     },
     "solid.emerald":{
         "class": SolidRGB,
@@ -219,7 +245,8 @@ avail_progs = {
             "g": 93,
             "b": 28,
         },
-        "grouping": "solid"
+        "grouping": "solid",
+        "display": "Solid - Emerald",
     },
     "solid.gold":{
         "class": SolidRGB,
@@ -229,7 +256,8 @@ avail_progs = {
             "g": 215,
             "b": 0,
         },
-        "grouping": "solid"
+        "grouping": "solid",
+        "display": "Solid - Gold",
     },
     "solid.coffee":{
         "class": SolidRGB,
@@ -239,7 +267,8 @@ avail_progs = {
             "g": 86,
             "b": 56,
         },
-        "grouping": "solid"
+        "grouping": "solid",
+        "display": "Solid - Coffee",
     }
 }
 

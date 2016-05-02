@@ -31,7 +31,7 @@ from devices.ada import AdaDevice
 from devices.esp8266ws2812i2s import ESPDevice
 
 from simpleprogs import WaitingCounter
-from helpers import DummySerialDevice
+from helpers import DummySerialDevice, rgb_triplet_to_html_hex_code
 
 LED_COUNT = 240
 LED_PORT = "/dev/ttyACM0"
@@ -281,12 +281,35 @@ class LightProgramListGrouped(resource.Resource):
         request.setHeader("Content-Type", "application/json; charset=utf-8")
         grpd = {}
         for k,v in self.service.available_progs.iteritems():
-            print k
+            # print k
+            # print v
             grouping_val = v.get('grouping')
+            colors = v.get('colors')
+            if not colors:
+                ss = v['kwargs'].get('state_storage')
+                if not ss:
+                    colors = ['#060606']
+                    v['colors'] = colors
+                else:
+                    # set the kwargs
+                    ss_kwargs = v['kwargs']
+                    del ss_kwargs['state_storage']
+                    ss_kwargs['id'] = 1
+
+                    init = ss(**ss_kwargs)
+                    colors = []
+                    for i in xrange(60):
+                        init.do_step()
+                        rgb = init.read_rgb()
+                        rgb_as_hex = rgb_triplet_to_html_hex_code(rgb)
+                        colors.append(rgb_as_hex)
+                    v['colors'] = list(set(colors))
+
+            data = {"action":k, "display":v['display'], "color":colors}
             if grouping_val and grouping_val in grpd:
-                grpd[grouping_val].append(k)
+                grpd[grouping_val].append(data)
             elif grouping_val:
-                grpd[grouping_val] = [k]
+                grpd[grouping_val] = [data]
 
         status = sorted(self.service.available_progs.keys())
         retval = json.dumps({"available_grouped": grpd})

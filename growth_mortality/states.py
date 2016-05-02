@@ -107,3 +107,7 @@ class BaseGMStateHSV(BaseLEDState, HSVHelper):
             self.h, self.s, self.v = self.final_output_hsvs.pop(0)
         else:
             self.instantiate_lists()
+
+    def read_rgb(self):
+        r, g, b = self._hsv_to_rgb(self.h, self.s, self.v)
+        return [int(r), int(g), int(b)]
