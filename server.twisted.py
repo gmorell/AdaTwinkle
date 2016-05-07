@@ -677,11 +677,11 @@ class LightService(service.Service):
             print addrs
             for a in addrs[netifaces.AF_INET]:
                 print a
-                info_desc = {'path': '/progs/', 'name': discovery_name}
-                config = ServiceInfo("_http._tcp.local.",
-                               "%s.%s.%s.LambentAether._http._tcp.local." % (socket.gethostname(),i, port),
+                info_desc = {'path': '/progs_grp/', 'name': discovery_name}
+                config = ServiceInfo("_aether._tcp.local.",
+                               "%s_%s_%s_lambent._aether._tcp.local." % (socket.gethostname(),i, port),
                                socket.inet_aton(a['addr']), port, 0, 0,
-                               info_desc, "lambentaether-autodisc-0.local.")
+                               info_desc)
 
                 self.zeroconf.register_service(config)
                 self.zconfigs.append(config)
@@ -777,4 +777,3 @@ serviceCollection = service.IServiceCollection(application)
 s.setServiceParent(serviceCollection)
 # internet.TCPServer(8660, s.getLightFactory()).setServiceParent(serviceCollection)
 internet.TCPServer(lambent_port, server.Site(s.getLightResource())).setServiceParent(serviceCollection)
-
