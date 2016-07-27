@@ -8,6 +8,11 @@ class GrowthAndMortality(BaseTwistedStep, AdaProtocolHandler):
             kwargs['state_storage'] = BaseGMStateHSV
         if hasattr(self, "state_kwargs"):
             kwargs['state_kwargs'] = self.state_kwargs
+
+        if 'growth_hues' in kwargs:
+            kwargs['state_kwargs']['growth_hues'] = kwargs.pop("growth_hues")
+        if 'death_hues' in kwargs:
+            kwargs['state_kwargs']['death_hues'] = kwargs.pop("death_hues")
         super(GrowthAndMortality, self).__init__(*args, **kwargs)
 
 class GAMLeaves(GrowthAndMortality):

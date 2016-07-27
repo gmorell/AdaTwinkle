@@ -196,7 +196,7 @@ avail_progs = {
             "growth_hues": [90, 98, 94, 95, 90],
             "death_hues": [90, 95, 85, 90, 80, 85, 75, 80, 70, 75, 65, 70, 60, 65, 55, 60, 50, 55, 45, 50, 40, 45, 35, 40, 30, 35, 25, 30, 20, 25, 15, 20, 10, 15, 5, 10, 0]
         },
-        "grouping":"growth_mortality",
+        "grouping": "growth_mortality",
         "display": "Leaves - TEST",
     },
     # "test.sweep": {
