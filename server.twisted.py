@@ -294,8 +294,8 @@ class LightProgramListGrouped(resource.Resource):
                     # set the kwargs
                     ss_kwargs = v['kwargs']
                     del ss_kwargs['state_storage']
-                    if "state_steps" in ss_kwargs:
-                        del ss_kwargs['state_steps']
+                    if "fade_steps" in ss_kwargs:
+                        del ss_kwargs['fade_steps']
                     ss_kwargs['id'] = 1
 
                     init = ss(**ss_kwargs)
