@@ -44,7 +44,8 @@ class BaseTwistedStep(object):
         filters = kwargs.pop('filters', collections.OrderedDict())
         self.filters = filters
         self.transitions_list = []
-        # super(BaseTwistedStep, self).__init__(*args, **kwargs)
+        kwargs.pop("id", None)
+        super(BaseTwistedStep, self).__init__(*args, **kwargs)
     def intermediate_extra_led(self, led):
         pass
     def final_extra_group(self):
