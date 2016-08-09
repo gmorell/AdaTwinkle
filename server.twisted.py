@@ -294,6 +294,8 @@ class LightProgramListGrouped(resource.Resource):
                     # set the kwargs
                     ss_kwargs = v['kwargs']
                     del ss_kwargs['state_storage']
+                    if "state_steps" in ss_kwargs:
+                        del ss_kwargs['state_steps']
                     ss_kwargs['id'] = 1
 
                     init = ss(**ss_kwargs)
@@ -677,7 +679,7 @@ class LightService(service.Service):
             print addrs
             for a in addrs[netifaces.AF_INET]:
                 print a
-                info_desc = {'path': '/progs_grp/', 'name': discovery_name}
+                info_desc = {'path': '/progs_grp/', 'name': discovery_name, "port":port}
                 config = ServiceInfo("_aether._tcp.local.",
                                "%s_%s_%s_lambent._aether._tcp.local." % (socket.gethostname(),i, port),
                                socket.inet_aton(a['addr']), port, 0, 0,
