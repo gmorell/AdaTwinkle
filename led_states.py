@@ -254,7 +254,7 @@ class RainbowLEDState(BaseLEDState, HSVHelper):
 
 
 class DualHueLEDState(BaseLEDState, HSVHelper):
-    def __init__(self, id, status=0, saturation=255, value=255, stepsize=1, hue1=0, hue2=0):
+    def __init__(self, id, status=0, saturation=255, value=255, stepsize=1, hue1=0, hue2=0, **kwargs):
         self.id = id
         self.status = status
         self.sz = stepsize
