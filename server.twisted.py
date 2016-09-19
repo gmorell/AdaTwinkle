@@ -1,6 +1,7 @@
 # !/usr/bin/env python
 import collections
 import urlparse
+from copy import deepcopy
 from importlib import import_module
 import itertools
 import json
@@ -281,18 +282,18 @@ class LightProgramListGrouped(resource.Resource):
         request.setHeader("Content-Type", "application/json; charset=utf-8")
         grpd = {}
         for k,v in self.service.available_progs.iteritems():
-            # print k
-            # print v
-            grouping_val = v.get('grouping')
-            colors = v.get('colors')
+            key = deepcopy(k)
+            val = deepcopy(v) # deep copy these so we don't barn the existing things
+            grouping_val = val.get('grouping')
+            colors = val.get('colors')
             if not colors:
-                ss = v['kwargs'].get('state_storage')
+                ss = val['kwargs'].get('state_storage')
                 if not ss:
                     colors = ['#060606']
-                    v['colors'] = colors
+                    val['colors'] = colors
                 else:
                     # set the kwargs
-                    ss_kwargs = v['kwargs']
+                    ss_kwargs = val['kwargs']
                     del ss_kwargs['state_storage']
                     if "fade_steps" in ss_kwargs:
                         del ss_kwargs['fade_steps']
@@ -305,9 +306,9 @@ class LightProgramListGrouped(resource.Resource):
                         rgb = init.read_rgb()
                         rgb_as_hex = rgb_triplet_to_html_hex_code(rgb)
                         colors.append(rgb_as_hex)
-                    v['colors'] = list(set(colors))
+                    val['colors'] = list(set(colors))
 
-            data = {"action":k, "display":v['display'], "color":colors}
+            data = {"action":key, "display":val['display'], "color":colors}
             if grouping_val and grouping_val in grpd:
                 grpd[grouping_val].append(data)
             elif grouping_val:
@@ -528,7 +529,6 @@ class LightService(service.Service):
         # # setup
         self.program_class = prog['class']
         self.program_args = prog.get('kwargs', {})
-
         self.program_args['device'] = self.device
         self.program_args.update(GLOBAL_KWARGS)
 

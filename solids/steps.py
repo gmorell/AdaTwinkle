@@ -6,6 +6,7 @@ class SolidRGB(AdaProtocolHandler, BaseTwistedStep):
         self.r = kwargs.pop('r', 255)
         self.g = kwargs.pop('g', 255)
         self.b = kwargs.pop('b', 255)
+        self.id = kwargs.pop('id', 0)
         kwargs['state_kwargs'] = {"r": self.r, "g": self.g, "b": self.b}
         super(SolidRGB, self).__init__(*args, **kwargs)
         self.transitions_list = []
