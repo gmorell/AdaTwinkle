@@ -32,7 +32,7 @@
   - name: bareback pip deps
     pip: requirements={{ lambent_home }}/requirements.txt
 
-  - debug: msg="PID:{{ custom_pid_conf }}"
+#  - debug: msg="PID:{{ custom_pid_conf }}"
 
   - name: write lambent supervisor config
     template: src=lambent_supervisor_tmpl.jinja2 dest=/etc/supervisor/conf.d/lambent_{{ custom_pid_conf|default("") }}.conf mode=0644

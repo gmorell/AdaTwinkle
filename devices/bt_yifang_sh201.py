@@ -57,7 +57,7 @@ class YifangSH201Device(BaseDevice):
         self.peripherals = filter(None, [self._connect_single(a) for a in self.device_addresses])
         for p in self.peripherals:
             value = chunked.pop()
-            self._write_rgdb(*value, periph=p)
+            self._write_rgb(*value, periph=p)
 
         for p in self.peripherals:
             p.disconnect()

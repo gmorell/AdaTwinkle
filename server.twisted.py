@@ -737,6 +737,12 @@ else:
     discovery_name = "LAMBENT"
     sys.stderr.write("NO NAME SET, USING LAMBENT")
 
+if os.environ.has_key("LAMBENTSPEEDINDEX"):
+    speed_index = int(os.environ.get("LAMBENTSPEEDINDEX", 2))
+else:
+    speed_index = 2
+
+
 lambent_port = int(os.environ.get("LAMBENTPORT", 8680))
 
 if lambent_port == 8680:
@@ -777,7 +783,8 @@ s = LightService(
     default_prog=default_prog,
     discovery_name=discovery_name,
     device=device,
-    lambent_port=lambent_port
+    lambent_port=lambent_port,
+    step_time_index=speed_index,
 )
 serviceCollection = service.IServiceCollection(application)
 s.setServiceParent(serviceCollection)
