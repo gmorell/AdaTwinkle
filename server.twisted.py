@@ -429,7 +429,7 @@ class LightProgramAddFilter(resource.Resource):
         return self.handle_get_post(filt)
 
 class LightService(service.Service):
-    step_sizes = [0.01, 0.05, 0.1, 0.5, 1, 5, 10]
+    step_sizes = [0.01, 0.05, 0.1, 0.5, 1, 5, 10, 30, 60]
     def __init__(self, counter=None, loop=None, device = AdaDevice(serial=DummySerialDevice()), step_time_index=2, current_value="default",
                  avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, lambent_port=8680,
                  discovery_name="", **kwargs):
