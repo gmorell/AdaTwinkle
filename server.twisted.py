@@ -29,6 +29,7 @@ from twisted.web import static
 import txtemplate
 from zeroconf import ServiceInfo, Zeroconf
 from devices.ada import AdaDevice
+from devices.bt_yifang_sh201 import YifangSH201Device
 from devices.esp8266ws2812i2s import ESPDevice
 
 from simpleprogs import WaitingCounter
@@ -749,6 +750,7 @@ print type(lambent_port)
 # "espudp://192.168.1.1:192.168.1.2"
 # "adlserial:///dev/ttyACM0"
 # "debug://"
+# "btnexturn://C4:ED:BA:56:8D:01::C4:ED:BA:56:8D:02"
 parsed = urlparse.urlparse(lambent_connect)
 if parsed.scheme == "espudp":
     device_class = ESPDevice
@@ -761,6 +763,10 @@ elif parsed.scheme == "adlserial":
 elif parsed.scheme == "debug":
     device_class = AdaDevice
     device_kwargs = {"serial": DummySerialDevice()}
+
+elif parsed.scheme == "btnexturn":
+    device_class = YifangSH201Device
+    device_kwargs = {"devices": parsed.netloc.split('::')}
 
 device = device_class(**device_kwargs)
 

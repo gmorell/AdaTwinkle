@@ -3,6 +3,7 @@ MarkupSafe==0.23
 RPi.GPIO==0.5.11
 Twisted==15.0.0
 backports.ssl-match-hostname==3.4.0.2
+bluepy==1.0.5
 certifi==14.05.14
 enum-compat==0.0.2
 enum34==1.0.4

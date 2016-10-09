@@ -18,6 +18,7 @@
        - ca-certificates
        - screen
        - supervisor
+       - libglib2.0-dev
 
   - name: User anyone?
     user: name={{ lambent_user }} shell=/bin/bash
@@ -28,10 +29,10 @@
   - name: Git Clone
     git: repo=https://github.com/gmorell/LambentAether.git dest={{ lambent_home }} update=yes
 
-#  - name: bareback pip deps
-#    pip: requirements={{ lambent_home }}/requirements.txt
+  - name: bareback pip deps
+    pip: requirements={{ lambent_home }}/requirements.txt
 
-#  - debug: msg="PID:{{ custom_pid_conf }}"
+  - debug: msg="PID:{{ custom_pid_conf }}"
 
   - name: write lambent supervisor config
     template: src=lambent_supervisor_tmpl.jinja2 dest=/etc/supervisor/conf.d/lambent_{{ custom_pid_conf|default("") }}.conf mode=0644
