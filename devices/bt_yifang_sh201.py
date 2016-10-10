@@ -1,5 +1,5 @@
 
-
+import bluepy
 from bluepy import btle
 from devices.base import BaseDevice
 from helpers import chunks
@@ -38,7 +38,11 @@ class YifangSH201Device(BaseDevice):
         bc = struct.pack('h', b)[0]
 
         # get services
-        periph.discoverServices()
+        try:
+            periph.discoverServices()
+        except bluepy.btle.BTLEException: # try again later
+            return
+
         colorcontrol = periph.services.values()[2]
 
         # get characteristics
