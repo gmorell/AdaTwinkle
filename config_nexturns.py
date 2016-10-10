@@ -4,6 +4,8 @@ from filters.colors import RGBtoGRBLambentOutputFilter, InvertLambentOutputFilte
 from growth_mortality.states import BaseGMStateHSV
 from growth_mortality.steps import GrowthAndMortality, GAMLeaves
 from lambents.test_patterns import TestRunner
+from minmax.states import MinMaxHSVState
+from minmax.steps import MinMaxHSVStep
 from simpleprogs import WaitingCounter, DoubleWaitingCounter
 from led_states import ChaserLEDState, RainbowLEDState, DualHueLEDState, MultiChaserLEDState, MultiNoSpaceChaseState, \
     HSVAwareLEDStepState, ChaoticPixelState, EntropicPixelState
@@ -97,6 +99,26 @@ avail_progs = {
         },
         "grouping": "solid",
         "display": "Solid - Coffee",
+    },
+    "minmax.warm":{
+        "class": MinMaxHSVStep,
+        "kwargs": {
+            "state_storage": MinMaxHSVState,
+            "min": 192,
+            "max": 15,
+        },
+        "grouping": "minmax",
+        "display": "MINMAX - Warm",
+    },
+    "minmax.cool":{
+        "class": MinMaxHSVStep,
+        "kwargs": {
+            "state_storage": MinMaxHSVState,
+            "min": 100,
+            "max": 200,
+        },
+        "grouping": "minmax",
+        "display": "MINMAX - Warm",
     }
 }
 
