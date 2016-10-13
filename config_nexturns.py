@@ -119,6 +119,16 @@ avail_progs = {
         },
         "grouping": "minmax",
         "display": "MINMAX - Warm",
+    },
+    "minmax.bouncy":{
+        "class": MinMaxHSVStep,
+        "kwargs": {
+            "state_storage": MinMaxHSVState,
+            "min": 30,
+            "max": 150,
+        },
+        "grouping": "minmax",
+        "display": "MINMAX - Bouncy",
     }
 }
 
