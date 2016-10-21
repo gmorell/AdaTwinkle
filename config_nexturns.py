@@ -147,3 +147,5 @@ avail_filters = {
     "OPA": PastelOutputFilter,
     "ODO": DarkenedOutputFilter,
 }
+
+remote_device_managed = 7

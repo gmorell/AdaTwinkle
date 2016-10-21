@@ -432,10 +432,11 @@ class LightService(service.Service):
     step_sizes = [0.01, 0.05, 0.1, 0.5, 1, 5, 10, 30, 60]
     def __init__(self, counter=None, loop=None, device = AdaDevice(serial=DummySerialDevice()), step_time_index=2, current_value="default",
                  avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, lambent_port=8680,
-                 discovery_name="", **kwargs):
+                 discovery_name="", remote_device_managed=False, **kwargs):
         self.current_value = current_value
         self.step_time_index = step_time_index
         self.available_progs = avail_progs
+        self.remote_device_managed = remote_device_managed
 
         if not device:
             self.device = device
@@ -562,6 +563,64 @@ class LightService(service.Service):
             #     self.device.write(l)
         else:
             place_to_hold_stuff = []
+
+        if place_to_hold_stuff and remote_device_managed != False:
+            """
+            This is a stupid quick implementation of taking far fewer steps,
+            its not particularly perfect, but its Good Enough
+            """
+            len_pl = len(place_to_hold_stuff)
+
+            if remote_device_managed == 0: # no fade
+                place_to_hold_stuff = []
+
+            elif remote_device_managed == 1: # half as many
+                place_to_hold_stuff = place_to_hold_stuff[::2]
+
+            elif remote_device_managed == 2: # 1/4 as many
+                last = place_to_hold_stuff[-1]
+                place_to_hold_stuff = place_to_hold_stuff[::4]
+                if place_to_hold_stuff[-1] != last:
+                    place_to_hold_stuff.append(last)
+
+            elif remote_device_managed == 3:
+                last = place_to_hold_stuff[-1]
+                place_to_hold_stuff = place_to_hold_stuff[::10]
+                if place_to_hold_stuff[-1] != last:
+                    place_to_hold_stuff.append(last)
+
+            elif remote_device_managed == 4:
+                pass
+
+            elif remote_device_managed == 5 and len_pl > 3: # single intermediate
+                start = place_to_hold_stuff[0]
+                end = place_to_hold_stuff[-1]
+                middle = len_pl/2
+
+                place_to_hold_stuff=[start, middle, end]
+
+            elif remote_device_managed == 6 and len_pl > 5:
+                start = place_to_hold_stuff[0]
+                end = place_to_hold_stuff[-1]
+                mid_1 = len_pl / 4 * 1  # 25%ish
+                mid_2 = len_pl / 4 * 2  # 50%ish
+                mid_3 = len_pl / 4 * 3  # 75%ish
+
+                place_to_hold_stuff=[start, mid_1, mid_2, mid_3, end]
+
+            elif remote_device_managed == 7 and len_pl > 7:
+                start = place_to_hold_stuff[0]
+                end = place_to_hold_stuff[-1]
+                mid_1 = len_pl / 6 * 1  # 16%ish
+                mid_2 = len_pl / 6 * 2  # 32%ish
+                mid_3 = len_pl / 6 * 3  # 48%ish
+                mid_4 = len_pl / 6 * 4  # 64%ish
+                mid_5 = len_pl / 6 * 5  # 80%ish
+                place_to_hold_stuff=[start, mid_1, mid_2, mid_3, mid_4, mid_5, end]
+
+            else: # fallback
+                place_to_hold_stuff = []
+            pass
 
         initiated_prog.transitions_list = place_to_hold_stuff
         loop_new = task.LoopingCall(initiated_prog.step)
@@ -717,6 +776,26 @@ if os.environ.has_key("LAMBENTCONFIG"):
         else:
             sys.stderr.write("LAMBENT CONFIG HAS NO PROGS, USING DEFAULT\n")
 
+        if hasattr(config, "device_managed"):
+            """
+            Remote devices (like certain superchina bluetooth bulbs) may somewhat manage their fade,
+            making the really fancy default fade seem pointless and take forever (like when bulbs chg every 30s)
+
+            Configuration Values :
+            False: Full fade
+            0: No Fade
+            1: 50% as many steps
+            2: 25% as many steps
+            3: 10% as many steps
+            4: 5% as many steps # not implemented yet
+            5: 1 Intermediate
+            6: 3 Intermediate
+            7: 5 Intermediate
+            """
+            remote_device_managed = config.remote_device_managed
+        else:
+            remote_device_managed = False
+
     except ImportError:
         sys.stderr.write("LAMBENT UNABLE TO LOAD CONFIG FILE, USING DEFAULT\n")
 
@@ -785,6 +864,7 @@ s = LightService(
     device=device,
     lambent_port=lambent_port,
     step_time_index=speed_index,
+    remote_device_managed=remote_device_managed,
 )
 serviceCollection = service.IServiceCollection(application)
 s.setServiceParent(serviceCollection)
