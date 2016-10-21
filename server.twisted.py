@@ -591,7 +591,7 @@ class LightService(service.Service):
                 end = place_to_hold_stuff[-1]
                 middle = len_pl/2
 
-                place_to_hold_stuff=[start, middle, end]
+                place_to_hold_stuff=[start, place_to_hold_stuff[middle], end]
 
             elif remote_device_managed == 6 and len_pl > 5:
                 start = place_to_hold_stuff[0]
@@ -600,7 +600,8 @@ class LightService(service.Service):
                 mid_2 = len_pl / 4 * 2  # 50%ish
                 mid_3 = len_pl / 4 * 3  # 75%ish
 
-                place_to_hold_stuff=[start, mid_1, mid_2, mid_3, end]
+                place_to_hold_stuff = [start, place_to_hold_stuff[mid_1], place_to_hold_stuff[mid_2],
+                                       place_to_hold_stuff[mid_3], end]
 
             elif remote_device_managed == 7 and len_pl > 7:
                 start = place_to_hold_stuff[0]
@@ -610,7 +611,9 @@ class LightService(service.Service):
                 mid_3 = len_pl / 6 * 3  # 48%ish
                 mid_4 = len_pl / 6 * 4  # 64%ish
                 mid_5 = len_pl / 6 * 5  # 80%ish
-                place_to_hold_stuff=[start, mid_1, mid_2, mid_3, mid_4, mid_5, end]
+                place_to_hold_stuff = [start, place_to_hold_stuff[mid_1], place_to_hold_stuff[mid_2],
+                                       place_to_hold_stuff[mid_3], place_to_hold_stuff[mid_4],
+                                       place_to_hold_stuff[mid_5], end]
 
             else: # fallback
                 place_to_hold_stuff = []
