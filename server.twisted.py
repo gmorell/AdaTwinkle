@@ -1,39 +1,33 @@
 # !/usr/bin/env python
 import collections
-import urlparse
-from copy import deepcopy
-from importlib import import_module
 import itertools
 import json
 import netifaces
-import os
-import serial
 import socket
 import sys
+import urlparse
 import uuid
+from copy import deepcopy
+from importlib import import_module
+
+import os
+import serial
+import txtemplate
 from twisted.application import internet
 from twisted.application import service
-
-from twisted.internet import defer
 from twisted.internet import protocol
-from twisted.internet import reactor
 from twisted.internet import task
-from twisted.internet import utils
-
 from twisted.protocols import basic
-
-from twisted.web import client
 from twisted.web import resource
 from twisted.web import server
 from twisted.web import static
-import txtemplate
 from zeroconf import ServiceInfo, Zeroconf
+
 from devices.ada import AdaDevice
 from devices.bt_yifang_sh201 import YifangSH201Device
 from devices.esp8266ws2812i2s import ESPDevice
-
-from simpleprogs import WaitingCounter
 from helpers import DummySerialDevice, rgb_triplet_to_html_hex_code
+from simpleprogs import WaitingCounter
 
 LED_COUNT = 240
 LED_PORT = "/dev/ttyACM0"
@@ -776,7 +770,7 @@ if os.environ.has_key("LAMBENTCONFIG"):
         else:
             sys.stderr.write("LAMBENT CONFIG HAS NO PROGS, USING DEFAULT\n")
 
-        if hasattr(config, "device_managed"):
+        if hasattr(config, "remote_device_managed"):
             """
             Remote devices (like certain superchina bluetooth bulbs) may somewhat manage their fade,
             making the really fancy default fade seem pointless and take forever (like when bulbs chg every 30s)
