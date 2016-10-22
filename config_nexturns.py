@@ -1,17 +1,9 @@
 from filters.colors import RGBtoGRBLambentOutputFilter, InvertLambentOutputFilter, PercentageBrightnessReduc50, \
     PercentageBrightnessReduc66, PercentageBrightnessReduc75, PercentageBrightnessReduc80, PercentageBrightnessReduc90, \
     NeonOutputFilter, PastelOutputFilter, DarkenedOutputFilter
-from growth_mortality.states import BaseGMStateHSV
-from growth_mortality.steps import GrowthAndMortality, GAMLeaves
-from lambents.test_patterns import TestRunner
 from minmax.states import MinMaxHSVState
 from minmax.steps import MinMaxHSVStep
-from simpleprogs import WaitingCounter, DoubleWaitingCounter
-from led_states import ChaserLEDState, RainbowLEDState, DualHueLEDState, MultiChaserLEDState, MultiNoSpaceChaseState, \
-    HSVAwareLEDStepState, ChaoticPixelState, EntropicPixelState
-from run_chaser import SimpleColorChaser, SimpleShiftingColorChaser, ChaosPixel, EntropicPixel
-from run_chaser import RainbowChaser, BouncyChaser
-from run_chaser import MultiSimpleColorChaser, MultiSimpleNoSpaceChaser
+from simpleprogs import WaitingCounter
 from solids.states import SolidRGBState
 from solids.steps import SolidRGB
 from standby import StandbyRunner, StandbyFadeRunner
@@ -129,6 +121,16 @@ avail_progs = {
         },
         "grouping": "minmax",
         "display": "MINMAX - Bouncy",
+    },
+    "minmax.rainbow": {
+        "class": MinMaxHSVStep,
+        "kwargs": {
+            "state_storage": MinMaxHSVState,
+            "min": 0,
+            "max": 255,
+        },
+        "grouping": "minmax",
+        "display": "MINMAX - Rainbow",
     }
 }
 
