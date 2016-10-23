@@ -794,6 +794,7 @@ if os.environ.has_key("LAMBENTCONFIG"):
             remote_device_managed = False
 
     except ImportError:
+        remote_device_managed = False
         sys.stderr.write("LAMBENT UNABLE TO LOAD CONFIG FILE, USING DEFAULT\n")
 
 if os.environ.has_key("LAMBENTDEFAULTFILTERS"):
