@@ -1,10 +1,12 @@
+import random
+import struct
 
 import bluepy
 from bluepy import btle
+
 from devices.base import BaseDevice
 from helpers import chunks
-import random
-import struct
+
 
 class YifangSH201Device(BaseDevice):
     def __init__(self, devices, shuffle=True):
@@ -46,7 +48,11 @@ class YifangSH201Device(BaseDevice):
         colorcontrol = periph.services.values()[2]
 
         # get characteristics
-        x = colorcontrol.getCharacteristics()
+        try:
+            x = colorcontrol.getCharacteristics()
+        except IOError:
+            print 'failed to get characteristics , trying again next tick around'
+            return None
 
         # write
         x[0].write(rc)
