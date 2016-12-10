@@ -1,7 +1,7 @@
 {% extends "base.jinja2" %}
 
 {% block extrahead %}
-    <link rel="stylesheet" href="/assets/css/landing.style.css"/>
+    <link rel="stylesheet" href="/assets/css/landing.style.old.css"/>
 {% endblock %}
 
 {% block body %}
@@ -9,40 +9,30 @@
     <div data-role="page" id="demo-page">
     <nav class="light-blue lighten-1" role="navigation">
         <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Lambent Aether</a>
-            <span class="right">
+            <ul class="right">
                 <li><a href="#">Currently: <span class="statusbox"></span> </a></li>
-            </span>
+            </ul>
 {#            <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="mdi-navigation-menu"></i></a>#}
         </div>
     </nav>
         <div data-role="content" class="ui-content">
-            <div class="row">
-{#            {% for p in progs %}#}
-{#                  #}
-{#                <a href="/set?prog={{ p }}" class="buttan" >#}
-{#                <div class="square card-panel waves-effect waves-light light-blue accent-1 col s12 m5 l3">#}
-{#                    {{ p }}#}
-{#                </div>#}
-{#                </a>#}
-{##}
-{#            {% endfor %}#}
-            {% for k,v in progs_grp.iteritems() %}
-                <div class="square card-panel waves-effect waves-light purple accent-1 col s12 m5 l3">
-                    {{ k }}
-                </div>
-                {% for p in v %}
-                    <a href="/set?prog={{ p }}" class="buttan" >
-                    <div class="square card-panel waves-effect waves-light light-blue accent-1 col s12 m5 l3">
-                        {{ p }}
-                    </div>
-                    </a>
-                    {% if loop.last %}
+            {% for p in progs %}
+                      
+                <div class="square waves-effect waves-light light-blue accent-1">
+
+                    <div class="content">
+                        <a href="/set?prog={{ p }}" class="buttan" >
+                        <div class="table">
+                            <div class="table-cell">
+                                {{ p }}
+                            </div>
                         </div>
-                        <div class="row">
-                    {% endif %}
-                {% endfor %}
+                        </a>
+                    </div>
+
+                </div>
+
             {% endfor %}
-            </div>
         </div>
     </div>
     <script type="text/javascript">

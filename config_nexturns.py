@@ -7,6 +7,9 @@ from simpleprogs import WaitingCounter
 from solids.states import SolidRGBState
 from solids.steps import SolidRGB
 from standby import StandbyRunner, StandbyFadeRunner
+from twinklers.states import BaseTwinkleState
+from twinklers.steps import TwinklerBase, TwinklerRedGreen, TwinklerPurp, TwinklerBlue, TwinklerGreen, TwinklerRed, \
+    TwinklerAll, TwinklerAmber, TwinklerAllButMore
 
 avail_progs = {
     "default": {
@@ -131,7 +134,80 @@ avail_progs = {
         },
         "grouping": "minmax",
         "display": "MINMAX - Rainbow",
-    }
+    },
+    # twinkle
+    "twinke.warm":{
+        "class": TwinklerBase,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - Base",
+    },
+    "twinke.redgreen":{
+        "class": TwinklerRedGreen,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - RedGreen",
+    },
+    "twinke.purple":{
+        "class": TwinklerPurp,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - Purp",
+    },
+    "twinke.blue":{
+        "class": TwinklerBlue,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - Blue",
+    },
+    "twinke.green":{
+        "class": TwinklerGreen,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - Green",
+    },
+    "twinke.red":{
+        "class": TwinklerRed,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - Red",
+    },
+    "twinke.amber":{
+        "class": TwinklerAmber,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - Amber",
+    },
+    "twinke.all":{
+        "class": TwinklerAll,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - All",
+    },
+    "twinke.allplusplus":{
+        "class": TwinklerAllButMore,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - All++",
+    },
 }
 
 avail_filters = {

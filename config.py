@@ -2,17 +2,19 @@ from filters.colors import RGBtoGRBLambentOutputFilter, InvertLambentOutputFilte
     PercentageBrightnessReduc66, PercentageBrightnessReduc75, PercentageBrightnessReduc80, PercentageBrightnessReduc90, \
     NeonOutputFilter, PastelOutputFilter, DarkenedOutputFilter
 from growth_mortality.states import BaseGMStateHSV
-from growth_mortality.steps import GrowthAndMortality, GAMLeaves
-from lambents.test_patterns import TestRunner
-from simpleprogs import WaitingCounter, DoubleWaitingCounter
+from growth_mortality.steps import GAMLeaves
 from led_states import ChaserLEDState, RainbowLEDState, DualHueLEDState, MultiChaserLEDState, MultiNoSpaceChaseState, \
-    HSVAwareLEDStepState, ChaoticPixelState, EntropicPixelState
-from run_chaser import SimpleColorChaser, SimpleShiftingColorChaser, ChaosPixel, EntropicPixel
-from run_chaser import RainbowChaser, BouncyChaser
+    ChaoticPixelState, EntropicPixelState
 from run_chaser import MultiSimpleColorChaser, MultiSimpleNoSpaceChaser
+from run_chaser import RainbowChaser, BouncyChaser
+from run_chaser import SimpleColorChaser, SimpleShiftingColorChaser, ChaosPixel, EntropicPixel
+from simpleprogs import WaitingCounter
 from solids.states import SolidRGBState
 from solids.steps import SolidRGB
 from standby import StandbyRunner, StandbyFadeRunner
+from twinklers.states import BaseTwinkleState
+from twinklers.steps import TwinklerBase, TwinklerRedGreen, TwinklerPurp, TwinklerBlue, TwinklerGreen, TwinklerRed, \
+    TwinklerAll, TwinklerAmber, TwinklerAllButMore
 
 avail_progs = {
     "default": {
@@ -269,7 +271,80 @@ avail_progs = {
         },
         "grouping": "solid",
         "display": "Solid - Coffee",
-    }
+    },
+    # twinkle
+    "twinke.warm":{
+        "class": TwinklerBase,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - Base",
+    },
+    "twinke.redgreen":{
+        "class": TwinklerRedGreen,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - RedGreen",
+    },
+    "twinke.purple":{
+        "class": TwinklerPurp,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - Purp",
+    },
+    "twinke.blue":{
+        "class": TwinklerBlue,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - Blue",
+    },
+    "twinke.green":{
+        "class": TwinklerGreen,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - Green",
+    },
+    "twinke.red":{
+        "class": TwinklerRed,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - Red",
+    },
+    "twinke.amber":{
+        "class": TwinklerAmber,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - Amber",
+    },
+    "twinke.all":{
+        "class": TwinklerAll,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - All",
+    },
+    "twinke.allplusplus":{
+        "class": TwinklerAllButMore,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - All++",
+    },
 }
 
 avail_filters = {

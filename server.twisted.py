@@ -134,6 +134,19 @@ class LightHTMLTree(resource.Resource):
 
         progs = self.service.available_progs.keys()
         context['progs'] = progs
+
+        progs_grp = {}
+        for k,v in self.service.available_progs.iteritems():
+            key = deepcopy(k)
+            val = deepcopy(v)  # deep copy these so we don't barn the existing things
+            grp = val.get("grouping", "NONE")
+            if grp in progs_grp:
+                progs_grp[grp].append(key)
+            else:
+                progs_grp[grp] = [key]
+
+        context['progs_grp'] = progs_grp
+
         def cb(content):
             request.write(content)
             request.setResponseCode(200)
@@ -739,9 +752,11 @@ class LightService(service.Service):
                                "%s_%s_%s_lambent._aether._tcp.local." % (socket.gethostname(),i, port),
                                socket.inet_aton(a['addr']), port, 0, 0,
                                info_desc)
-
-                self.zeroconf.register_service(config)
-                self.zconfigs.append(config)
+                try:
+                    self.zeroconf.register_service(config)
+                    self.zconfigs.append(config)
+                except:
+                    print("Service %s failed to register" % config)
 
     def stopService(self):
         for c in self.zconfigs:
@@ -796,6 +811,9 @@ if os.environ.has_key("LAMBENTCONFIG"):
     except ImportError:
         remote_device_managed = False
         sys.stderr.write("LAMBENT UNABLE TO LOAD CONFIG FILE, USING DEFAULT\n")
+
+else:
+    remote_device_managed = False
 
 if os.environ.has_key("LAMBENTDEFAULTFILTERS"):
     default_filters = os.environ.get("LAMBENTDEFAULTFILTERS").split(',')
