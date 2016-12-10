@@ -138,8 +138,8 @@ class LightHTMLTree(resource.Resource):
         progs_grp = {}
         for k,v in self.service.available_progs.iteritems():
             key = deepcopy(k)
-            val = deepcopy(v)  # deep copy these so we don't barn the existing things
-            grp = val.get("grouping", "NONE")
+            val = v  # deep copy these so we don't barn the existing things
+            grp = v.get("grouping", "NONE")
             if grp in progs_grp:
                 progs_grp[grp].append(key)
             else:
