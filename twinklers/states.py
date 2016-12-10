@@ -73,7 +73,7 @@ class BaseTwinkleState(BaseLEDState, HSVHelper):
 
     def do_step(self):
         # determine if we're at the top / bottom / middle wth our last move?
-        print self.current_position
+        # print self.current_position
 
         # find what direction we're going
         if self.at_min:
@@ -115,7 +115,7 @@ class BaseTwinkleState(BaseLEDState, HSVHelper):
         if self.b > t_b: self.b = t_b
 
         if self.r == t_r and self.g == t_g and self.b == t_b:
-            print "max"
+            # print "max"
             self.at_max = True
 
     def step_down(self):

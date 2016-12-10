@@ -45,6 +45,16 @@ class TwinklerBlue(TwinklerBase):
         [0, 102, 202],
     ]
 
+class TwinklerWintry(TwinklerBase):
+    surprises = [
+        [0, 102, 202],
+        [47, 141, 179],
+        [91,165,194],
+        [141, 198, 217],
+        [229,244,249]
+    ]
+    chance = 14
+
 class TwinklerAmber(TwinklerBase):
     surprises = [
         [255, 191, 0],
@@ -58,6 +68,9 @@ class TwinklerAll(TwinklerBase):
         [255, 50, 50],
         [50, 200, 50],
         [255, 191, 0],
+
+        [0, 69, 129],
+        [1, 138, 189],
     ]
 
 class TwinklerAllButMore(TwinklerBase):

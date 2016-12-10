@@ -9,7 +9,7 @@ from solids.steps import SolidRGB
 from standby import StandbyRunner, StandbyFadeRunner
 from twinklers.states import BaseTwinkleState
 from twinklers.steps import TwinklerBase, TwinklerRedGreen, TwinklerPurp, TwinklerBlue, TwinklerGreen, TwinklerRed, \
-    TwinklerAll, TwinklerAmber, TwinklerAllButMore
+    TwinklerAll, TwinklerAmber, TwinklerAllButMore, TwinklerWintry
 
 avail_progs = {
     "default": {
@@ -167,6 +167,14 @@ avail_progs = {
         },
         "grouping": "twinkle",
         "display": "Twinkle - Blue",
+    },
+    "twinke.wintry":{
+        "class": TwinklerWintry,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - Wintry",
     },
     "twinke.green":{
         "class": TwinklerGreen,
