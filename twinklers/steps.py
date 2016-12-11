@@ -60,6 +60,12 @@ class TwinklerAmber(TwinklerBase):
         [255, 191, 0],
     ]
 
+class TwinklerAmberRed(TwinklerBase):
+    surprises = [
+        [255, 191, 0],
+        [255, 50, 50],
+    ]
+
 
 class TwinklerAll(TwinklerBase):
     surprises = [

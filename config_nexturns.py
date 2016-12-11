@@ -9,7 +9,7 @@ from solids.steps import SolidRGB
 from standby import StandbyRunner, StandbyFadeRunner
 from twinklers.states import BaseTwinkleState
 from twinklers.steps import TwinklerBase, TwinklerRedGreen, TwinklerPurp, TwinklerBlue, TwinklerGreen, TwinklerRed, \
-    TwinklerAll, TwinklerAmber, TwinklerAllButMore, TwinklerWintry
+    TwinklerAll, TwinklerAmber, TwinklerAllButMore, TwinklerWintry, TwinklerAmberRed
 
 avail_progs = {
     "default": {
@@ -105,6 +105,26 @@ avail_progs = {
         "grouping": "minmax",
         "display": "MINMAX - Warm",
     },
+    "minmax.warm":{
+        "class": MinMaxHSVStep,
+        "kwargs": {
+            "state_storage": MinMaxHSVState,
+            "min": 192,
+            "max": 15,
+        },
+        "grouping": "minmax",
+        "display": "MINMAX - Warm",
+    },
+    "minmax.fire":{
+        "class": MinMaxHSVStep,
+        "kwargs": {
+            "state_storage": MinMaxHSVState,
+            "min": 240,
+            "max": 64,
+        },
+        "grouping": "minmax",
+        "display": "MINMAX - Fire",
+    },
     "minmax.cool":{
         "class": MinMaxHSVStep,
         "kwargs": {
@@ -199,6 +219,14 @@ avail_progs = {
         },
         "grouping": "twinkle",
         "display": "Twinkle - Amber",
+    },
+    "twinke.amberred":{
+        "class": TwinklerAmberRed,
+        "kwargs": {
+            "state_storage": BaseTwinkleState,
+        },
+        "grouping": "twinkle",
+        "display": "Twinkle - AmberRed",
     },
     "twinke.all":{
         "class": TwinklerAll,
