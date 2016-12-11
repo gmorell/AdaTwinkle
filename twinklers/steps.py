@@ -65,6 +65,7 @@ class TwinklerAmberRed(TwinklerBase):
         [255, 191, 0],
         [255, 50, 50],
     ]
+    chance = 17
 
 
 class TwinklerAll(TwinklerBase):
