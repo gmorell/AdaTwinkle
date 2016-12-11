@@ -110,7 +110,7 @@ avail_progs = {
         "kwargs": {
             "state_storage": MinMaxHSVState,
             "min": 0,
-            "max": 42,
+            "max": 36,
         },
         "grouping": "minmax",
         "display": "MINMAX - Fire",
