@@ -105,22 +105,12 @@ avail_progs = {
         "grouping": "minmax",
         "display": "MINMAX - Warm",
     },
-    "minmax.warm":{
-        "class": MinMaxHSVStep,
-        "kwargs": {
-            "state_storage": MinMaxHSVState,
-            "min": 192,
-            "max": 15,
-        },
-        "grouping": "minmax",
-        "display": "MINMAX - Warm",
-    },
     "minmax.fire":{
         "class": MinMaxHSVStep,
         "kwargs": {
             "state_storage": MinMaxHSVState,
-            "min": 240,
-            "max": 64,
+            "min": 0,
+            "max": 56,
         },
         "grouping": "minmax",
         "display": "MINMAX - Fire",
