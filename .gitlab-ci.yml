@@ -1,0 +1,9 @@
+  deploy:
+    stage: deploy
+    environment: gabehaus
+    script:
+      - echo $lambent_inventory > inventory
+      - tr '\r' '\n' < inventory | sed 's/^[ \t]*//;s/[ \t]*$//' > inventory_fixed
+      - ansible-playbook --syntax-check -i inventory_fixed deploy/site.yml
+      - ansible-playbook -i inventory_fixed deploy/site.yml
+
