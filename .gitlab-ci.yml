@@ -1,3 +1,7 @@
+before_script:
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "SSH_PRIVKEY")
+
   deploy:
     stage: deploy
     environment: gabehaus
