@@ -7,8 +7,8 @@ autorestart=true
 redirect_stderr=True
 environment = {{ lament_env }}
 # this is likely to be installed on a pi, so we dont want to barn through all the available space
-stderr_logfile = /tmp/log/supervisord/aether_lambent_{{ custom_pid_conf|default("") }}.stderr.log
-stdout_logfile = /tmp/log/supervisord/aether_lambent_{{ custom_pid_conf|default("") }}.stdout.log
+stderr_logfile = /tmp/log_supervisord_aether_lambent_{{ custom_pid_conf|default("") }}.stderr.log
+stdout_logfile = /tmp/log_supervisord_aether_lambent_{{ custom_pid_conf|default("") }}.stdout.log
 stdout_logfile_maxbytes=1MB
 stdout_logfile_backups=3
 stdout_capture_maxbytes=1MB
