@@ -13,10 +13,12 @@ from importlib import import_module
 import os
 import serial
 import txtemplate
+from autobahn.twisted.wamp import ApplicationRunner, ApplicationSession
 from twisted.application import internet
 from twisted.application import service
 from twisted.internet import protocol
 from twisted.internet import task
+from twisted.internet.defer import inlineCallbacks, Deferred, returnValue
 from twisted.protocols import basic
 from twisted.web import resource
 from twisted.web import server
@@ -437,9 +439,10 @@ class LightProgramAddFilter(resource.Resource):
 
 class LightService(service.Service):
     step_sizes = [0.01, 0.05, 0.1, 0.5, 1, 5, 10, 30, 60]
+
     def __init__(self, counter=None, loop=None, device = AdaDevice(serial=DummySerialDevice()), step_time_index=2, current_value="default",
                  avail_progs=None, avail_filters = {}, default_filters=[], default_prog=None, lambent_port=8680,
-                 discovery_name="", remote_device_managed=False, **kwargs):
+                 discovery_name="", remote_device_managed=False, xbar_component=None, xbar_runner_kwargs=None, **kwargs):
         self.current_value = current_value
         self.step_time_index = step_time_index
         self.available_progs = avail_progs
@@ -489,7 +492,42 @@ class LightService(service.Service):
 
 
         self.update_filters()
+        self.disc_name = discovery_name
         self.announce(discovery_name, port=lambent_port)
+
+        if xbar_runner_kwargs:
+            self.xbar_session = None
+            self.xbar_component = xbar_component
+            self.xbar_runner_kwargs = xbar_runner_kwargs
+            self.xbar_hello()
+
+
+    @inlineCallbacks
+    def _init_xbar(self):
+        if self.xbar_session is None:
+            self.xbar_session = yield self.start_crossbar()
+
+    @inlineCallbacks
+    def start_crossbar(self):
+        running_deferred = Deferred()
+        extra = dict(running=running_deferred)
+        self.xbar_runner_kwargs['extra'] = extra
+
+        xbar_runner = ApplicationRunner(**self.xbar_runner_kwargs)
+        xbar_runner.run(self.xbar_component, start_reactor=False, auto_reconnect=True)
+        session = yield running_deferred
+        returnValue(session)
+
+    @inlineCallbacks
+    def xbar_hello(self):
+        yield self._init_xbar()
+        yield self.xbar_session.publish("us.thingcosm.aethers.lambent.updates.program", server_name=self.disc_name, server_program=self.current_value)
+
+    @inlineCallbacks
+    def xbar_update_speed(self):
+        yield self._init_xbar()
+        yield self.xbar_session.publish("us.thingcosm.aethers.lambent.updates.speed", server_name=self.disc_name,
+                                        server_value=self.step_time)
 
     @property
     def step_time(self):
@@ -638,6 +676,7 @@ class LightService(service.Service):
         self.setLoop(loop_new)
         self.setCntr(initiated_prog)
         self.update_filters()
+        self.xbar_hello()
 
     def get_filters(self):
         filters = [f[1] for f in self.service_enabled_filters.values()]
@@ -649,6 +688,7 @@ class LightService(service.Service):
     def loop_set(self):
         self.loop.stop()
         self.loop.start(self.step_time)
+        self.xbar_update_speed()
 
     def loop_slower(self):
         max_index = len(self.step_sizes) - 1
@@ -763,6 +803,28 @@ class LightService(service.Service):
             self.zeroconf.unregister_service(c)
         self.zeroconf.close()
 
+class LambentCrossbarComponent(ApplicationSession):
+    def __init__(self, config=None):
+        ApplicationSession.__init__(self, config)
+        print("component created")
+
+    def onConnect(self):
+        print("transport connected")
+        self.join(self.config.realm)
+
+    def onChallenge(self, challenge):
+        print("authentication challenge received")
+
+    def onJoin(self, details):
+        self.config.extra['running'].callback(self)
+        print("session joined")
+
+    def onLeave(self, details):
+        print("session left")
+
+    def onDisconnect(self):
+        print("transport disconnected")
+
 if __name__ == "__main__":
     device = DummySerialDevice()
     # device = serial.Serial(LED_PORT, 115200)
@@ -832,11 +894,24 @@ else:
     discovery_name = "LAMBENT"
     sys.stderr.write("NO NAME SET, USING LAMBENT")
 
+if os.environ.has_key("LAMBENTCROSSBAR"):
+    running_deferred = Deferred()
+    extra = dict(running=running_deferred)
+    crossbar_url = unicode(os.environ.get("LAMBENTCROSSBAR", u"ws://127.0.0.1/ws"))
+    crossbar_realm = unicode(os.environ.get("LAMBENTCROSSBARREALM", u"realm1"))
+    crossbar_runner_kwargs = {"url": crossbar_url, "realm": crossbar_realm}
+    # crossbar_runner = ApplicationRunner(url=crossbar_url, realm=crossbar_realm, extra=extra)
+    crossbar_component = LambentCrossbarComponent
+    # start(crossbar_runner, crossbar_component)
+
+else:
+    crossbar_runner = None
+    crossbar_component = None
+
 if os.environ.has_key("LAMBENTSPEEDINDEX"):
     speed_index = int(os.environ.get("LAMBENTSPEEDINDEX", 2))
 else:
     speed_index = 2
-
 
 lambent_port = int(os.environ.get("LAMBENTPORT", 8680))
 
@@ -881,7 +956,16 @@ s = LightService(
     lambent_port=lambent_port,
     step_time_index=speed_index,
     remote_device_managed=remote_device_managed,
+    xbar_component=crossbar_component,
+    xbar_runner_kwargs=crossbar_runner_kwargs,
 )
+
+# if crossbar_component: # this is a totally legit move here
+#     s.xbar = crossbar_session
+    # crossbar_component.service = s
+    # annc = "us.thingcosm.aethers.lambent.updates"
+
+
 serviceCollection = service.IServiceCollection(application)
 s.setServiceParent(serviceCollection)
 # internet.TCPServer(8660, s.getLightFactory()).setServiceParent(serviceCollection)
