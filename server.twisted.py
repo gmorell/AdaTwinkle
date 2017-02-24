@@ -499,7 +499,7 @@ class LightService(service.Service):
             self.xbar_session = None
             self.xbar_component = xbar_component
             self.xbar_runner_kwargs = xbar_runner_kwargs
-            self.xbar_hello()
+            self.xbar_init()
 
 
     @inlineCallbacks
@@ -518,14 +518,45 @@ class LightService(service.Service):
         session = yield running_deferred
         returnValue(session)
 
+    # @inlineCallbacks
+    def xbar_change_program(self, program):
+        # this should be improved and normalized later to not repat code but for now it works
+        if program not in self.available_progs.keys():
+            return json.dumps(
+                    {
+                        "status": "ERROR_NON_EXISTENT_PROGRAM_PARAMETER",
+                        "value": program
+                    }
+                )
+        else:
+            prog = self.available_progs.get(program, None)
+            self.change_program(prog, program)
+            return json.dumps(
+                {
+                    "status": "SUCCESS_CHANGED_PROGRAM",
+                    "value": program
+                }
+            )
+
+    @inlineCallbacks
+    def xbar_init(self):
+        yield self._init_xbar()
+        yield self.xbar_hello()
+        yield self.xbar_register_methods()
+
+    @inlineCallbacks
+    def xbar_register_methods(self):
+        xbar_method = "us.thingcosm.aethers.lambent.%(name)s.program" % {"name":self.disc_name.lower()}
+        print("qqq")
+        print(xbar_method)
+        yield self.xbar_session.register(self.xbar_change_program, xbar_method)
+
     @inlineCallbacks
     def xbar_hello(self):
-        yield self._init_xbar()
         yield self.xbar_session.publish("us.thingcosm.aethers.lambent.updates.program", server_name=self.disc_name, server_program=self.current_value)
 
     @inlineCallbacks
     def xbar_update_speed(self):
-        yield self._init_xbar()
         yield self.xbar_session.publish("us.thingcosm.aethers.lambent.updates.speed", server_name=self.disc_name,
                                         server_value=self.step_time)
 
@@ -818,9 +849,6 @@ class LambentCrossbarComponent(ApplicationSession):
     def onJoin(self, details):
         self.config.extra['running'].callback(self)
         print("session joined")
-
-    def onLeave(self, details):
-        print("session left")
 
     def onDisconnect(self):
         print("transport disconnected")
