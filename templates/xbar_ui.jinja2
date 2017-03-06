@@ -1,0 +1,7 @@
+{% for pg,v in programs.iteritems() %}
+    <h4>{{ pg }}</h4>
+    {% for prog in v %}
+{#        <a switch="http://{{ host }}:{{ port }}/set?prog={{ prog }}" class="clickable btn btn-primary">{{ prog }}</a>#}
+        <a xburi="{{ method }}" xbprog="{{ prog }}" class="clickable btn btn-primary">{{ prog }}</a>
+    {% endfor %}
+{% endfor %}

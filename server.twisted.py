@@ -14,6 +14,7 @@ import os
 import serial
 import txtemplate
 from autobahn.twisted.wamp import ApplicationRunner, ApplicationSession
+from autobahn.wamp.types import PublishOptions
 from twisted.application import internet
 from twisted.application import service
 from twisted.internet import protocol
@@ -506,6 +507,7 @@ class LightService(service.Service):
     def _init_xbar(self):
         if self.xbar_session is None:
             self.xbar_session = yield self.start_crossbar()
+            self.xbar_session.name = self.disc_name.lower()
 
     @inlineCallbacks
     def start_crossbar(self):
@@ -547,9 +549,15 @@ class LightService(service.Service):
     @inlineCallbacks
     def xbar_register_methods(self):
         xbar_method = "us.thingcosm.aethers.lambent.%(name)s.program" % {"name":self.disc_name.lower()}
-        print("qqq")
-        print(xbar_method)
+        # print("qqq")
+        # print(xbar_method)
+        self.xbar_method = xbar_method
         yield self.xbar_session.register(self.xbar_change_program, xbar_method)
+
+        # Continuous Lookup And Data Publishing
+        yield self.xbar_session.subscribe(self.xbar_info_ui, "us.thingcosm.aethers.continuous")
+        yield self.xbar_session.publish("us.thingcosm.aethers.continuous", options=PublishOptions(exclude_me=False))
+        # yield self.xbar_session.publish("us.thingcosm.aethers.continuous", 0)
 
     @inlineCallbacks
     def xbar_hello(self):
@@ -557,8 +565,34 @@ class LightService(service.Service):
 
     @inlineCallbacks
     def xbar_update_speed(self):
-        yield self.xbar_session.publish("us.thingcosm.aethers.lambent.updates.speed", server_name=self.disc_name,
-                                        server_value=self.step_time)
+        yield self.xbar_session.publish("us.thingcosm.aethers.lambent.updates.speed", server_name=self.disc_name, server_value=self.step_time)
+
+    @inlineCallbacks
+    def xbar_info_ui_items(self):
+        progs_grp = {}
+        for k,v in self.available_progs.iteritems():
+            key = deepcopy(k)
+            grp = v.get("grouping", "NONE")
+
+            if grp in progs_grp:
+                progs_grp[grp].append(key)
+            else:
+                progs_grp[grp] = [key]
+
+        loader = txtemplate.Jinja2TemplateLoader(TEMPLATE_DIR)
+        template = loader.load("xbar_ui.jinja2")
+        context={"programs":progs_grp, "method":self.xbar_method}
+        rendered = yield template.render(**context)
+        print(rendered)
+        returnValue(rendered)
+        # return {"a":"B"}
+
+    @inlineCallbacks
+    def xbar_info_ui(self, *args, **kwargs):
+        """ When the frontend looks for us, populate it"""
+        body = yield self.xbar_info_ui_items()
+        yield self.xbar_session.publish("us.thingcosm.aethers.continuous.ui", cls="lambent", name=self.disc_name.lower(), body=body)
+        yield self.xbar_session.publish("us.thingcosm.aethers.continuous.ui", cls="lambent", name=self.disc_name.upper(), body=body)
 
     @property
     def step_time(self):
@@ -852,6 +886,7 @@ class LambentCrossbarComponent(ApplicationSession):
 
     def onDisconnect(self):
         print("transport disconnected")
+        # self.publish("us.thingcosm.aethers.continuous.dc", cls="aether", ) # one day
 
 if __name__ == "__main__":
     device = DummySerialDevice()
