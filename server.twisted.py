@@ -592,7 +592,7 @@ class LightService(service.Service):
         """ When the frontend looks for us, populate it"""
         body = yield self.xbar_info_ui_items()
         yield self.xbar_session.publish("us.thingcosm.aethers.continuous.ui", cls="lambent", name=self.disc_name.lower(), body=body)
-        yield self.xbar_session.publish("us.thingcosm.aethers.continuous.ui", cls="lambent", name=self.disc_name.upper(), body=body)
+        # yield self.xbar_session.publish("us.thingcosm.aethers.continuous.ui", cls="lambent", name=self.disc_name.upper(), body=body)
 
     @property
     def step_time(self):
