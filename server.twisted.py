@@ -231,6 +231,20 @@ class LightStatus(resource.Resource):
         return retval
 
 
+class LightInfo(resource.Resource):
+    def __init__(self, service):
+        resource.Resource.__init__(self)
+        self.service = service
+
+    def render_GET(self, request):
+        request.setHeader("Content-Type", "application/json; charset=utf-8")
+        status = self.service.current_value
+        retval = json.dumps(
+            {"name": self.service.disc_name}
+        )
+        return retval
+
+
 class LightProgramSetter(resource.Resource):
     def __init__(self, service):
         resource.Resource.__init__(self)
@@ -796,6 +810,9 @@ class LightService(service.Service):
         st = LightStatus(self)
         r.putChild("status", st)
 
+        si = LightInfo(self)
+        r.putChild("info", si)
+
         pl = LightProgramList(self)
         r.putChild("progs", pl)
 
@@ -970,6 +987,7 @@ if os.environ.has_key("LAMBENTCROSSBAR"):
 else:
     crossbar_runner = None
     crossbar_component = None
+    crossbar_runner_kwargs = None
 
 if os.environ.has_key("LAMBENTSPEEDINDEX"):
     speed_index = int(os.environ.get("LAMBENTSPEEDINDEX", 2))
